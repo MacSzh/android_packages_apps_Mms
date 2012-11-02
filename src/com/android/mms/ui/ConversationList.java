@@ -147,7 +147,6 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
 
     private void setupActionBar() {
         ActionBar actionBar = getActionBar();
-
         ViewGroup v = (ViewGroup)LayoutInflater.from(this)
             .inflate(R.layout.conversation_list_actionbar, null);
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM,
@@ -156,7 +155,7 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
                 new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
                         ActionBar.LayoutParams.WRAP_CONTENT,
                         Gravity.CENTER_VERTICAL | Gravity.RIGHT));
-
+        actionBar.setSplitBackgroundDrawable(getResources().getDrawable(R.color.widget_sender_text_color_read));
         mUnreadConvCount = (TextView)v.findViewById(R.id.unread_conv_count);
     }
 
@@ -255,7 +254,6 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
         DraftCache.getInstance().addOnDraftChangedListener(this);
 
         mNeedToMarkAsSeen = true;
-
         startAsyncQuery();
 
         // We used to refresh the DraftCache here, but

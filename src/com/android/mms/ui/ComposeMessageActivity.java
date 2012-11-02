@@ -25,7 +25,7 @@ import static com.android.mms.transaction.ProgressCallbackEntity.PROGRESS_STATUS
 import static com.android.mms.ui.MessageListAdapter.COLUMN_ID;
 import static com.android.mms.ui.MessageListAdapter.COLUMN_MSG_TYPE;
 import static com.android.mms.ui.MessageListAdapter.PROJECTION;
-
+import android.provider.Telephony.Threads;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -37,13 +37,16 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.text.Normalizer;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -51,8 +54,10 @@ import android.app.Dialog;
 import android.app.LoaderManager;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.AsyncQueryHandler;
 import android.content.BroadcastReceiver;
 import android.content.ClipData;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -91,6 +96,8 @@ import android.provider.CalendarContract.Events;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.Contacts;
+import android.provider.ContactsContract.PhoneLookup;
+import android.provider.ContactsContract.QuickContact;
 import android.provider.Settings;
 import android.provider.ContactsContract.Intents;
 import android.provider.MediaStore.Images;
@@ -115,6 +122,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -132,6 +140,7 @@ import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -154,6 +163,7 @@ import com.android.mms.TempFileProvider;
 import com.android.mms.data.Contact;
 import com.android.mms.data.ContactList;
 import com.android.mms.data.Conversation;
+import com.android.mms.data.Conversation.Cache;
 import com.android.mms.data.Conversation.ConversationQueryHandler;
 import com.android.mms.data.WorkingMessage;
 import com.android.mms.data.WorkingMessage.MessageStatusListener;
@@ -283,7 +293,7 @@ public class ComposeMessageActivity extends Activity
     private ContentResolver mContentResolver;
 
     private BackgroundQueryHandler mBackgroundQueryHandler;
-
+    private QueryHandler mQueryHandler;
     private Conversation mConversation;     // Conversation we are working in
 
     private boolean mExitOnSent;            // Should we finish() after sending a message?
@@ -296,10 +306,10 @@ public class ComposeMessageActivity extends Activity
     private TextView mSendButtonMms;        // Press to send mms
     private ImageButton mSendButtonSms;     // Press to send sms
     private EditText mSubjectTextEditor;    // Text editor for MMS subject
-
+    private GridView  mGridView;
     private AttachmentEditor mAttachmentEditor;
     private View mAttachmentEditorScrollView;
-
+    private ImageView mAddAttachment;
     private MessageListView mMsgListView;        // ListView for messages in this conversation
     public MessageListAdapter mMsgListAdapter;  // and its corresponding ListAdapter
 
@@ -370,6 +380,7 @@ public class ComposeMessageActivity extends Activity
     public static void log(String logMsg) {
         Thread current = Thread.currentThread();
         long tid = current.getId();
+        
         StackTraceElement[] stack = current.getStackTrace();
         String methodName = stack[3].getMethodName();
         // Prepend current thread ID and name of calling method to the message.
@@ -1906,6 +1917,13 @@ public class ComposeMessageActivity extends Activity
         mDebugRecipients = list.serialize();
 
         ActionBar actionBar = getActionBar();
+        if (mMsgListAdapter.getCount() > 0) {
+			actionBar.setDisplayHomeAsUpEnabled(false);
+			Contact contact = Contact.get(list.get(0).getNumber(), false);
+			Drawable avatarDrawable = contact.getAvatar(this, getResources()
+					.getDrawable(R.drawable.ic_contact_picture));
+			actionBar.setIcon(avatarDrawable);
+		}
         actionBar.setTitle(title);
         actionBar.setSubtitle(subTitle);
     }
@@ -2043,6 +2061,7 @@ public class ComposeMessageActivity extends Activity
         }
 
         mContentResolver = getContentResolver();
+        mQueryHandler = new QueryHandler(mContentResolver);
         mBackgroundQueryHandler = new BackgroundQueryHandler(mContentResolver);
 
         initialize(savedInstanceState, 0);
@@ -2312,7 +2331,12 @@ public class ComposeMessageActivity extends Activity
         updateTitle(mConversation.getRecipients());
 
         ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (mMsgListAdapter.getCount() > 0) {
+			actionBar.setDisplayHomeAsUpEnabled(false);
+		} else {
+			actionBar.setDisplayHomeAsUpEnabled(true);
+		}
+		addRecentContacts();
     }
 
     public void loadMessageContent() {
@@ -2751,10 +2775,15 @@ public class ComposeMessageActivity extends Activity
                 menu.add(0, MENU_ADD_SUBJECT, 0, R.string.add_subject).setIcon(
                         R.drawable.ic_menu_edit);
             }
-            menu.add(0, MENU_ADD_ATTACHMENT, 0, R.string.add_attachment)
-                .setIcon(R.drawable.ic_menu_attachment)
-                .setTitle(R.string.add_attachment)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);    // add to actionbar
+//        	if (mMsgListAdapter.getCount() == 0) {
+//				menu.add(0, MENU_ADD_ATTACHMENT, 0, R.string.add_attachment)
+//						.setIcon(R.drawable.ic_add_contact_picture)
+//						// add by shendu liuchuan
+//						.setTitle(R.string.add_attachment)
+//						.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS); // add
+//																			// to
+//																			// actionbar
+//			}
         }
 
         menu.add(0, MENU_ADD_TEMPLATE, 0, R.string.template_insert)
@@ -2825,9 +2854,15 @@ public class ComposeMessageActivity extends Activity
                 mSubjectTextEditor.requestFocus();
                 break;
             case MENU_ADD_ATTACHMENT:
-                // Launch the add-attachment list dialog
-                showAddAttachmentDialog(false);
-                break;
+            	//add by shendu liuchuan
+            	Intent contactIntent = new Intent();
+    			contactIntent.putExtra("from", 100);
+    			ComponentName comp = new ComponentName("com.android.contacts",
+    					"com.android.contacts.activities.ShenDuContactSelectionActivity");
+    			contactIntent.setComponent(comp);
+    			contactIntent.setAction("shendu.intent.action.PICK_ACTION");
+    			startActivityForResult(contactIntent, 0);
+    			break;
             case MENU_DISCARD:
                 mWorkingMessage.discard();
                 finish();
@@ -2845,6 +2880,10 @@ public class ComposeMessageActivity extends Activity
                 break;
 
             case android.R.id.home:
+            	if (mMsgListAdapter.getCount() > 0) {
+    				showContact();
+    				break;
+    			}
             case MENU_CONVERSATION_LIST:
                 exitComposeMessageActivity(new Runnable() {
                     @Override
@@ -2895,6 +2934,28 @@ public class ComposeMessageActivity extends Activity
         return true;
     }
 
+    //add by shendu liuchan
+	static final private int TOKEN_PHONE_LOOKUP_AND_TRIGGER = 3;
+	static final String[] PHONE_LOOKUP_PROJECTION = new String[] {
+			PhoneLookup._ID, PhoneLookup.LOOKUP_KEY, };
+    private void showContact() {
+		Contact contact = mConversation.getRecipients().get(0);
+		Cursor cursor = mContentResolver.query(Phone.CONTENT_URI, null,
+				Phone.NUMBER + "= ?", new String[] { contact.getNumber() },
+				"display_name COLLATE LOCALIZED asc");
+		if (cursor.getCount() != 0) {
+			QuickContact.showQuickContact(this, mTextCounter, contact.getUri(),
+					QuickContact.MODE_LARGE, new String[] {});
+		} else if (contact.getNumber() != null) {
+			mQueryHandler.startQuery(TOKEN_PHONE_LOOKUP_AND_TRIGGER, contact
+					.getNumber(), Uri.withAppendedPath(
+					PhoneLookup.CONTENT_FILTER_URI, contact.getNumber()),
+					PHONE_LOOKUP_PROJECTION, null, null, null);
+		} else {
+			// If a contact hasn't been assigned, don't react to click.
+			return;
+		}
+	}
     private void confirmDeleteThread(long threadId) {
         Conversation.startQueryHaveLockedMessages(mBackgroundQueryHandler,
                 threadId, ConversationList.HAVE_LOCKED_MESSAGES_TOKEN);
@@ -2905,7 +2966,130 @@ public class ComposeMessageActivity extends Activity
 //            return value;       // just return the default value or now
 //        }
 //    }
+    
+	private void addRecentContacts() {
+		// add by shendu liuchuan 
+		
+				if (mMsgListAdapter.getCount()==0&&mGridView!=null) {
+					final ArrayList<Contact> arrayList=new ArrayList<Contact>();
+					ArrayList<String> numArrayList=getRecentContacts();
+					for (int i = 0; i < numArrayList.size(); i++) {
+						Contact contact = Contact.get(
+								numArrayList.get(i),
+								false);
+						arrayList.add(contact);
+					}
 
+					mGridView.setAdapter(new RecentAdpter(arrayList));
+					mGridView.setOnItemClickListener(new OnItemClickListener() {
+
+						@Override
+						public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+								long arg3) {
+							// TODO 自动生成的方法存根
+								mRecipientsEditor.append(arrayList.get(arg2).getNumber());
+							mClickHashMap.put(arg2, arg2);
+							onUpdate(arrayList.get(arg2));
+						}
+					});
+				}
+	}
+	//add by shendu liuchuan
+	@SuppressLint("UseSparseArrays")
+	private ArrayList<String> getRecentContacts() {
+		HashMap<String, String> tempHashMap=new HashMap<String, String>();
+		ArrayList<String> arrayList=new ArrayList<String>();
+		Cursor countCursor = getContentResolver().query(
+				Uri.parse("content://mms-sms/conversationsbynum"), null, null,
+				null, "message_count DESC");
+		Cursor dateCursor = getContentResolver().query(
+				Conversation.sAllThreadsUri, null, null,
+				null, "date");
+		
+		if (countCursor.moveToFirst()) {
+			do {
+				Conversation conv = Cache.get(countCursor.getInt(0));
+				String nameString=	conv.getRecipients().formatNames(", ");
+				String numberString=	conv.getRecipients().formatNumbers(", ");
+				if (!nameString.equals(numberString)&&!tempHashMap.containsKey(numberString)) {
+					arrayList.add(numberString);
+					tempHashMap.put(numberString,numberString);
+				}
+				if (arrayList.size()==3) {
+					break;
+				}
+			} while (countCursor.moveToNext());
+		}
+		
+		if (dateCursor.moveToFirst()) {
+			do {
+				Conversation conv = Cache.get(dateCursor.getInt(0));
+				String nameString=	conv.getRecipients().formatNames(", ");
+				String numberString=	conv.getRecipients().formatNumbers(", ");
+				if (!nameString.equals(numberString)&&!tempHashMap.containsKey(numberString)) {
+					tempHashMap.put(numberString,numberString);
+					arrayList.add(numberString);
+				}
+				if (arrayList.size()==6) {
+					break;
+				}
+			
+			} while (dateCursor.moveToNext());
+		}
+		return arrayList;
+	}
+	//add by shendu liuchuan
+	 HashMap<Integer, Integer> mClickHashMap=new HashMap<Integer, Integer>();
+	private class RecentAdpter extends BaseAdapter{
+		private ArrayList<Contact> mArrayList;
+              public  RecentAdpter(ArrayList<Contact> arrayList) {
+	                      mArrayList=arrayList;
+                }
+			@Override
+			public View getView(int arg0, View arg1, ViewGroup arg2) {
+				// TODO 自动生成的方法存根
+				if (arg1 == null) {
+					arg1 = LayoutInflater.from(ComposeMessageActivity.this)
+							.inflate(R.layout.recentcontactsitem, null);
+				}
+				TextView nameTextView=(TextView) arg1.findViewById(R.id.textView1);
+				String nameString=mArrayList.get(arg0).getName();
+				if (nameString.length()>4) {
+					nameString=nameString.substring(0, 3);
+				}
+				nameTextView.setText(nameString);
+				return arg1;
+			}
+
+			@Override
+			public boolean isEnabled(int position) {
+				// TODO 自动生成的方法存根
+				if (mClickHashMap.containsKey(position)) {
+					return false;
+				}else {
+					return super.isEnabled(position);
+				}
+				
+			}
+
+			@Override
+			public long getItemId(int arg0) {
+				// TODO 自动生成的方法存根
+				return arg0;
+			}
+
+			@Override
+			public Object getItem(int arg0) {
+				// TODO 自动生成的方法存根
+				return mArrayList.get(arg0);
+			}
+
+			@Override
+			public int getCount() {
+				// TODO 自动生成的方法存根
+				return mArrayList.size();
+			}
+	}
     private void addAttachment(int type, boolean replace) {
         // Calculate the size of the current slide if we're doing a replace so the
         // slide size can optionally be used in computing how much room is left for an attachment.
@@ -3007,7 +3191,13 @@ public class ComposeMessageActivity extends Activity
             // based on attachments and other Mms attrs.
             mWorkingMessage.removeFakeMmsForDraft();
         }
-
+    	// add by shendu liuchuan
+		if (requestCode == 0 && resultCode == 0) {
+			if (data != null) {
+				long[] result = data.getLongArrayExtra("data");
+				addContacts(result);
+			}
+		}
         if (requestCode == REQUEST_CODE_PICK) {
             mWorkingMessage.asyncDeleteDraftSmsMessage(mConversation);
         }
@@ -3124,7 +3314,35 @@ public class ComposeMessageActivity extends Activity
                 break;
         }
     }
+ // add by shendu liuchuan
 
+ 	private void addContacts(long[] ids) {
+ 		StringBuffer inBuffer = new StringBuffer();
+ 		for (int i = 0; i < ids.length; i++) {
+ 			long id = ids[i];
+ 			inBuffer.append(id);
+ 			if (i != ids.length - 1) {
+ 				inBuffer.append(",");
+ 			}
+ 		}
+ 		Cursor phones = getContentResolver().query(Phone.CONTENT_URI, null,
+ 				Phone.CONTACT_ID + " in (" + inBuffer + ")", null, null);
+ 		StringBuffer phoneNumberBuffer = new StringBuffer();
+ 		if (phones.moveToFirst()) {
+ 			do {
+ 				String phoneNumber = phones.getString(phones
+ 						.getColumnIndex(Phone.NUMBER));
+ 				if (!TextUtils.isEmpty(phoneNumber)) {
+ 					mRecipientsEditor.append(phoneNumber);
+// 					phoneNumberBuffer.append(phoneNumber);
+// 					phoneNumberBuffer.append(",");
+ 				}
+ 			} while (phones.moveToNext());
+
+ 		} else {
+ 		}
+// 		mRecipientsEditor.setText(phoneNumberBuffer);
+ 	}
     private void processPickResult(final Intent data) {
         // The EXTRA_PHONE_URIS stores the phone's urls that were selected by user in the
         // multiple phone picker.
@@ -3467,8 +3685,17 @@ public class ComposeMessageActivity extends Activity
         if ((v == mSendButtonSms || v == mSendButtonMms) && isPreparedForSending()) {
             confirmSendMessageIfNeeded();
         } else if ((v == mRecipientsPicker)) {
-            launchMultiplePhonePicker();
-        }
+        	Intent contactIntent = new Intent();
+			contactIntent.putExtra("from", 100);
+			ComponentName comp = new ComponentName("com.android.contacts",
+					"com.android.contacts.activities.ShenDuContactSelectionActivity");
+			contactIntent.setComponent(comp);
+			contactIntent.setAction("shendu.intent.action.PICK_ACTION");
+			startActivityForResult(contactIntent, 0);
+//            launchMultiplePhonePicker();
+        }else if (v == mAddAttachment) {
+			showAddAttachmentDialog(false);
+		}
     }
 
     private void launchMultiplePhonePicker() {
@@ -3617,6 +3844,10 @@ public class ComposeMessageActivity extends Activity
         mAttachmentEditor = (AttachmentEditor) findViewById(R.id.attachment_editor);
         mAttachmentEditor.setHandler(mAttachmentEditorHandler);
         mAttachmentEditorScrollView = findViewById(R.id.attachment_editor_scroll_view);
+    	// add by shendu liuchuan
+        mGridView=(GridView) findViewById(R.id.recentcontacts);
+		mAddAttachment = (ImageView) findViewById(R.id.addothers);
+		mAddAttachment.setOnClickListener(this);
     }
 
     private void confirmDeleteDialog(OnClickListener listener, boolean locked) {
@@ -4601,4 +4832,33 @@ public class ComposeMessageActivity extends Activity
         }
         return super.onCreateDialog(id, args);
     }
+    
+    //add by shendu liuchuan
+    private class QueryHandler extends AsyncQueryHandler {
+
+		public QueryHandler(ContentResolver cr) {
+			super(cr);
+		}
+
+		@Override
+		protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
+			Uri lookupUri = null;
+			Uri createUri = null;
+			boolean trigger = false;
+			try {
+				switch (token) {
+				case TOKEN_PHONE_LOOKUP_AND_TRIGGER:
+					trigger = true;
+					createUri = Uri.fromParts("tel", (String) cookie, null);
+				}
+			} finally {
+				if (cursor != null) {
+					cursor.close();
+				}
+			}
+			final Intent intent = new Intent(Intents.SHOW_OR_CREATE_CONTACT,
+					createUri);
+			startActivity(intent);
+		}
+	}
 }

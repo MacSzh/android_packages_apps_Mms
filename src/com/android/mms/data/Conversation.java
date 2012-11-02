@@ -878,7 +878,7 @@ public class Conversation {
     /**
      * Private cache for the use of the various forms of Conversation.get.
      */
-    private static class Cache {
+    public static class Cache {
         private static Cache sInstance = new Cache();
         static Cache getInstance() { return sInstance; }
         private final HashSet<Conversation> mCache;
@@ -890,7 +890,7 @@ public class Conversation {
          * Return the conversation with the specified thread ID, or
          * null if it's not in cache.
          */
-        static Conversation get(long threadId) {
+        public static Conversation get(long threadId) {
             synchronized (sInstance) {
                 if (Log.isLoggable(LogTag.THREAD_CACHE, Log.VERBOSE)) {
                     LogTag.debug("Conversation get with threadId: " + threadId);

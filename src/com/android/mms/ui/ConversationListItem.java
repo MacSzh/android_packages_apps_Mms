@@ -27,9 +27,11 @@ import com.android.mms.util.SmileyParser;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 
+import android.net.Uri;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.text.Spannable;
@@ -52,12 +54,13 @@ public class ConversationListItem extends RelativeLayout implements Contact.Upda
             Checkable {
     private static final String TAG = "ConversationListItem";
     private static final boolean DEBUG = false;
-
+	private TextView mUnReadNum;
     private TextView mSubjectView;
     private TextView mFromView;
     private TextView mDateView;
     private View mAttachmentView;
     private View mErrorIndicator;
+    private Context mContext;
     private QuickContactBadge mAvatarView;
 
     static private Drawable sDefaultContactImage;
@@ -71,11 +74,12 @@ public class ConversationListItem extends RelativeLayout implements Contact.Upda
 
     public ConversationListItem(Context context) {
         super(context);
+    	mContext = context;
     }
 
     public ConversationListItem(Context context, AttributeSet attrs) {
         super(context, attrs);
-
+    	mContext = context;
         if (sDefaultContactImage == null) {
             sDefaultContactImage = context.getResources().getDrawable(R.drawable.ic_contact_picture);
         }
@@ -87,7 +91,8 @@ public class ConversationListItem extends RelativeLayout implements Contact.Upda
 
         mFromView = (TextView) findViewById(R.id.from);
         mSubjectView = (TextView) findViewById(R.id.subject);
-
+    	// add by shendu liuchuan
+		mUnReadNum = (TextView) findViewById(R.id.avatarnum);
         mDateView = (TextView) findViewById(R.id.date);
         mAttachmentView = findViewById(R.id.attachment);
         mErrorIndicator = findViewById(R.id.error);
@@ -183,7 +188,14 @@ public class ConversationListItem extends RelativeLayout implements Contact.Upda
         mConversation = conversation;
 
         updateBackground();
-
+     // add by shendu liuchuan
+     		if (conversation.hasUnreadMessages()) {
+     			mUnReadNum.setText(getUnReadUnm(conversation.getThreadId())
+     					.getCount() + "");
+     			mUnReadNum.setVisibility(View.VISIBLE);
+     		} else {
+     			mUnReadNum.setVisibility(View.GONE);
+     		}
         LayoutParams attachmentLayout = (LayoutParams)mAttachmentView.getLayoutParams();
         boolean hasError = conversation.hasError();
         // When there's an error icon, the attachment icon is left of the error icon.
@@ -247,6 +259,13 @@ public class ConversationListItem extends RelativeLayout implements Contact.Upda
         setBackground(background);
     }
 
+    //add by shendu liuchuan
+	private Cursor getUnReadUnm(long threadId) {
+		Cursor c = mContext.getContentResolver().query(
+				Uri.parse("content://sms"), null, "thread_id=? and read=?",
+				new String[] { threadId + "", "0" }, null);
+		return c;
+	}
     public final void unbind() {
         if (Log.isLoggable(LogTag.CONTACT, Log.DEBUG)) {
             Log.v(TAG, "unbind: contacts.removeListeners " + this);

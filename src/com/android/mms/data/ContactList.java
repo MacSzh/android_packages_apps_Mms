@@ -98,6 +98,15 @@ public class ContactList extends ArrayList<Contact>  {
         }
         return TextUtils.join(separator, names);
     }
+    
+    public String formatNumbers(String separator) {
+        String[] numbers = new String[size()];
+        int i = 0;
+        for (Contact c : this) {
+            numbers[i++] = c.getNumber();
+        }
+        return TextUtils.join(separator, numbers);
+    }
 
     public String formatNamesAndNumbers(String separator) {
         String[] nans = new String[size()];

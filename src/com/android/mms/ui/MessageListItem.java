@@ -151,6 +151,7 @@ public class MessageListItem extends LinearLayout implements
         mDeliveredIndicator = (ImageView) findViewById(R.id.delivered_indicator);
         mDetailsIndicator = (ImageView) findViewById(R.id.details_indicator);
         mAvatar = (QuickContactDivot) findViewById(R.id.avatar);
+        mAvatar.setVisibility(View.GONE);
         mMessageBlock = findViewById(R.id.message_block);
     }
 
