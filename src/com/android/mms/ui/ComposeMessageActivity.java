@@ -2069,6 +2069,7 @@ public class ComposeMessageActivity extends Activity
         if (TRACE) {
             android.os.Debug.startMethodTracing("compose");
         }
+    	addRecentContacts();
     }
 
     private void showSubjectEditor(boolean show) {
@@ -2336,7 +2337,6 @@ public class ComposeMessageActivity extends Activity
 		} else {
 			actionBar.setDisplayHomeAsUpEnabled(true);
 		}
-		addRecentContacts();
     }
 
     public void loadMessageContent() {

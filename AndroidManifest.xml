@@ -189,7 +189,7 @@
         </activity>
 
         <activity android:name=".ui.MessagingPreferenceActivity"
-            android:theme="@android:style/Theme.Holo.Light"
+            android:theme="@style/MmsHoloTheme"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:label="@string/preferences_title" />
 

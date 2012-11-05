@@ -25,6 +25,7 @@
     </style>
 
     <style name="MmsHoloTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@*android:style/Widget.Holo.Light.ActionBar</item>
     </style>
 
     <style name="WidgetTitle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">

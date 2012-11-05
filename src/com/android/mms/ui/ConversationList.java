@@ -155,7 +155,7 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
                 new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
                         ActionBar.LayoutParams.WRAP_CONTENT,
                         Gravity.CENTER_VERTICAL | Gravity.RIGHT));
-        actionBar.setSplitBackgroundDrawable(getResources().getDrawable(R.color.widget_sender_text_color_read));
+        actionBar.setSplitBackgroundDrawable(getResources().getDrawable(R.color.conversation_bottom));
         mUnreadConvCount = (TextView)v.findViewById(R.id.unread_conv_count);
     }
 

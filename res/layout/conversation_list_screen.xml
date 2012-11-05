@@ -28,7 +28,7 @@
         android:layout_height="match_parent"
         android:drawSelectorOnTop="false"
         android:scrollbarStyle="insideOverlay"
-        android:background="@color/background"
+        android:background="@drawable/comversation_bg"
         android:cacheColorHint="@color/background"
         android:fadingEdgeLength="16dip" />
 
