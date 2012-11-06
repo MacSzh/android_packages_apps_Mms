@@ -20,6 +20,7 @@
     android:id="@+id/custom_title_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/comversation_bg"
     android:orientation="horizontal">
 
     <TextView

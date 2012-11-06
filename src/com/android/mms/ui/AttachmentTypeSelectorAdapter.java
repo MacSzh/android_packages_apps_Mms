@@ -71,10 +71,10 @@ public class AttachmentTypeSelectorAdapter extends IconListAdapter {
         addItem(data, context.getString(R.string.attach_record_sound),
                 R.drawable.ic_attach_capture_audio_holo_light, RECORD_SOUND);
 
-        if (mode == MODE_WITH_SLIDESHOW) {
-            addItem(data, context.getString(R.string.attach_slideshow),
-                    R.drawable.ic_attach_slideshow_holo_light, ADD_SLIDESHOW);
-        }
+//        if (mode == MODE_WITH_SLIDESHOW) {
+//            addItem(data, context.getString(R.string.attach_slideshow),
+//                    R.drawable.ic_attach_slideshow_holo_light, ADD_SLIDESHOW);
+//        }
 
         return data;
     }

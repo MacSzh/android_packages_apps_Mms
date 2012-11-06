@@ -836,7 +836,6 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
             MenuInflater inflater = getMenuInflater();
             mSelectedThreadIds = new HashSet<Long>();
             inflater.inflate(R.menu.conversation_multi_select_menu, menu);
-
             if (mMultiSelectActionBarView == null) {
                 mMultiSelectActionBarView = LayoutInflater.from(ConversationList.this)
                     .inflate(R.layout.conversation_list_multi_select_actionbar, null);
@@ -845,6 +844,7 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
                     (TextView)mMultiSelectActionBarView.findViewById(R.id.selected_conv_count);
             }
             mode.setCustomView(mMultiSelectActionBarView);
+            mode.getCustomView().setBackgroundColor(getResources().getColor(R.color.conversation_bottom));
             ((TextView)mMultiSelectActionBarView.findViewById(R.id.title))
                 .setText(R.string.select_conversations);
             return true;
