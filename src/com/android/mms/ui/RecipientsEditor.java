@@ -23,6 +23,7 @@ import com.android.mms.data.Contact;
 import com.android.mms.data.ContactList;
 
 import android.content.Context;
+import android.net.Uri;
 import android.provider.Telephony.Mms;
 import android.telephony.PhoneNumberUtils;
 import android.text.Annotation;
@@ -126,11 +127,10 @@ public class RecipientsEditor extends RecipientEditTextView {
             }
         });
     }
-
+              
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         super.onItemClick(parent, view, position, id);
-
         if (mOnSelectChipRunnable != null) {
             mOnSelectChipRunnable.run();
         }

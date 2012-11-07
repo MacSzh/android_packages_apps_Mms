@@ -20,6 +20,6 @@
         android:drawable="@drawable/person_tag_white" />
 
     <item
-        android:state_pressed="true"
+        android:state_checked="true"
         android:drawable="@drawable/person_tag_blue" />
 </selector>

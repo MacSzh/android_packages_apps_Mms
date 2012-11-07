@@ -46,6 +46,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 import java.text.Normalizer;
 
+import android.R.integer;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -188,7 +189,7 @@ import com.android.mms.util.PhoneNumberFormatter;
 import com.android.mms.util.EmojiParser;
 import com.android.mms.util.SendingProgressTokenManager;
 import com.android.mms.util.SmileyParser;
-
+import com.android.ex.chips.RecipientEntry;
 import android.text.InputFilter.LengthFilter;
 
 /**
@@ -315,7 +316,7 @@ public class ComposeMessageActivity extends Activity
 
     private RecipientsEditor mRecipientsEditor;  // UI control for editing recipients
     private ImageButton mRecipientsPicker;       // UI control for recipients picker
-
+   private ChipsRecipientAdapter mChipsRecipientAdapter;
     private boolean mIsKeyboardOpen;             // Whether any keyboard is open
     private boolean mIsHardKeyboardOpen;         // Whether the hard keyboard is open
     private boolean mIsLandscape;                // Whether we're in landscape mode
@@ -1948,8 +1949,8 @@ public class ComposeMessageActivity extends Activity
             mRecipientsPicker = (ImageButton)findViewById(R.id.recipients_picker);
         }
         mRecipientsPicker.setOnClickListener(this);
-
-        mRecipientsEditor.setAdapter(new ChipsRecipientAdapter(this));
+         mChipsRecipientAdapter=   new ChipsRecipientAdapter(this);
+        mRecipientsEditor.setAdapter(mChipsRecipientAdapter);
         mRecipientsEditor.populate(recipients);
         mRecipientsEditor.setOnCreateContextMenuListener(mRecipientsMenuCreateListener);
         mRecipientsEditor.addTextChangedListener(mRecipientsWatcher);
@@ -1958,7 +1959,7 @@ public class ComposeMessageActivity extends Activity
         // potential issue is that it is hard for user to edit a recipient from hundred of
         // recipients in the editor box. We may redesign the editor box UI for this use case.
         // mRecipientsEditor.setFilters(new InputFilter[] {
-        //         new InputFilter.LengthFilter(RECIPIENTS_MAX_LENGTH) });
+        //         new Inp;utFilter.LengthFilter(RECIPIENTS_MAX_LENGTH) });
 
         mRecipientsEditor.setOnSelectChipRunnable(new Runnable() {
             @Override
@@ -2980,18 +2981,25 @@ public class ComposeMessageActivity extends Activity
 						arrayList.add(contact);
 					}
 
-					mGridView.setAdapter(new RecentAdpter(arrayList));
-					mGridView.setOnItemClickListener(new OnItemClickListener() {
+			mGridView.setAdapter(new RecentAdpter(arrayList));
+			mGridView.setOnItemClickListener(new OnItemClickListener() {
 
-						@Override
-						public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-								long arg3) {
-							// TODO 自动生成的方法存根
-								mRecipientsEditor.append(arrayList.get(arg2).getNumber());
-							mClickHashMap.put(arg2, arg2);
-							onUpdate(arrayList.get(arg2));
-						}
-					});
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					// TODO 自动生成的方法存根
+					mRecipientsEditor.append(arrayList.get(arg2).getNumber());
+					// mRecipientsEditor.submitItemByNum();
+					mClickHashMap.put(arg2, arg2);
+					TextView textView = (TextView) arg1.getTag();
+					int left = textView.getPaddingLeft();
+					int right = textView.getPaddingRight();
+					int top = textView.getPaddingTop();
+					textView.setBackgroundResource(R.drawable.person_tag_blue);
+					textView.setPadding(left, top, right, 0);
+					onUpdate(arrayList.get(arg2));
+				}
+			});
 				}
 	}
 	//add by shendu liuchuan
@@ -3009,6 +3017,9 @@ public class ComposeMessageActivity extends Activity
 		if (countCursor.moveToFirst()) {
 			do {
 				Conversation conv = Cache.get(countCursor.getInt(0));
+				if (conv==null) {
+					continue;
+				}
 				String nameString=	conv.getRecipients().formatNames(", ");
 				String numberString=	conv.getRecipients().formatNumbers(", ");
 				if (!nameString.equals(numberString)&&!tempHashMap.containsKey(numberString)) {
@@ -3024,6 +3035,9 @@ public class ComposeMessageActivity extends Activity
 		if (dateCursor.moveToFirst()) {
 			do {
 				Conversation conv = Cache.get(dateCursor.getInt(0));
+				if (conv==null) {
+					continue;
+				}
 				String nameString=	conv.getRecipients().formatNames(", ");
 				String numberString=	conv.getRecipients().formatNumbers(", ");
 				if (!nameString.equals(numberString)&&!tempHashMap.containsKey(numberString)) {
@@ -3039,6 +3053,9 @@ public class ComposeMessageActivity extends Activity
 		return arrayList;
 	}
 	//add by shendu liuchuan
+//	  class Views{
+//		TextView nameTextView;
+//	}
 	 HashMap<Integer, Integer> mClickHashMap=new HashMap<Integer, Integer>();
 	private class RecentAdpter extends BaseAdapter{
 		private ArrayList<Contact> mArrayList;
@@ -3048,11 +3065,15 @@ public class ComposeMessageActivity extends Activity
 			@Override
 			public View getView(int arg0, View arg1, ViewGroup arg2) {
 				// TODO 自动生成的方法存根
-				if (arg1 == null) {
+				TextView nameTextView;
+				if (arg1 == null || !(arg1.getTag() instanceof TextView)) {
 					arg1 = LayoutInflater.from(ComposeMessageActivity.this)
 							.inflate(R.layout.recentcontactsitem, null);
+					nameTextView=(TextView) arg1.findViewById(R.id.textView1);
+					arg1.setTag(nameTextView);
+				}else {
+					nameTextView=(TextView) arg1.getTag();
 				}
-				TextView nameTextView=(TextView) arg1.findViewById(R.id.textView1);
 				String nameString=mArrayList.get(arg0).getName();
 				if (nameString.length()>4) {
 					nameString=nameString.substring(0, 3);

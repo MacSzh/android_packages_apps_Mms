@@ -155,7 +155,7 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
                 new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
                         ActionBar.LayoutParams.WRAP_CONTENT,
                         Gravity.CENTER_VERTICAL | Gravity.RIGHT));
-        actionBar.setSplitBackgroundDrawable(getResources().getDrawable(R.color.conversation_bottom));
+        actionBar.setSplitBackgroundDrawable(getResources().getDrawable(R.drawable.sms_bot_bg));
         mUnreadConvCount = (TextView)v.findViewById(R.id.unread_conv_count);
     }
 
@@ -844,7 +844,6 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
                     (TextView)mMultiSelectActionBarView.findViewById(R.id.selected_conv_count);
             }
             mode.setCustomView(mMultiSelectActionBarView);
-            mode.getCustomView().setBackgroundColor(getResources().getColor(R.color.conversation_bottom));
             ((TextView)mMultiSelectActionBarView.findViewById(R.id.title))
                 .setText(R.string.select_conversations);
             return true;
