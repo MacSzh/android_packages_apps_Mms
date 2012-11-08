@@ -2988,8 +2988,7 @@ public class ComposeMessageActivity extends Activity
 				public void onItemClick(AdapterView<?> arg0, View arg1,
 						int arg2, long arg3) {
 					// TODO 自动生成的方法存根
-					mRecipientsEditor.append(arrayList.get(arg2).getNumber());
-					// mRecipientsEditor.submitItemByNum();
+					mRecipientsEditor.submitItemByNum(arrayList.get(arg2).getNumber());
 					mClickHashMap.put(arg2, arg2);
 					TextView textView = (TextView) arg1.getTag();
 					int left = textView.getPaddingLeft();
@@ -3354,9 +3353,7 @@ public class ComposeMessageActivity extends Activity
  				String phoneNumber = phones.getString(phones
  						.getColumnIndex(Phone.NUMBER));
  				if (!TextUtils.isEmpty(phoneNumber)) {
- 					mRecipientsEditor.append(phoneNumber);
-// 					phoneNumberBuffer.append(phoneNumber);
-// 					phoneNumberBuffer.append(",");
+ 					mRecipientsEditor.submitItemByNum(phoneNumber);
  				}
  			} while (phones.moveToNext());
 

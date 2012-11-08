@@ -70,6 +70,7 @@ public class RecipientsEditor extends RecipientEditTextView {
         }
     }
 
+    
     public RecipientsEditor(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -126,6 +127,11 @@ public class RecipientsEditor extends RecipientEditTextView {
                 mAffected = null;
             }
         });
+    }
+    //add by shendu liuchuan
+    public void submitItemByNum(
+            String numString) {
+    	super.submitItemByNum(numString);
     }
               
     @Override
