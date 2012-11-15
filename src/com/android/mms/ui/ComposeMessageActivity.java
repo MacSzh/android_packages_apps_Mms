@@ -2071,6 +2071,7 @@ public class ComposeMessageActivity extends Activity
             android.os.Debug.startMethodTracing("compose");
         }
     	addRecentContacts();
+	mMsgListView.setStackFromBottom(true);
     }
 
     private void showSubjectEditor(boolean show) {

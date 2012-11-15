@@ -126,7 +126,6 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
         listView.setOnKeyListener(mThreadListKeyListener);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new ModeCallback());
-	listView.setStackFromBottom(true);
 
         // Tell the list view which view to display when the list is empty
         listView.setEmptyView(findViewById(R.id.empty));
