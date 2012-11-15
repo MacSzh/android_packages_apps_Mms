@@ -33,6 +33,7 @@ import android.util.Log;
 
 import android.database.sqlite.SqliteWrapper;
 import com.android.mms.ui.MessageUtils;
+import com.android.mms.util.NameAvatarUtils;
 import com.android.mms.LogTag;
 import com.android.mms.MmsApp;
 import com.android.mms.R;
@@ -351,7 +352,19 @@ public class Contact {
                 mAvatar = new BitmapDrawable(context.getResources(), b);
             }
         }
-        return mAvatar != null ? mAvatar : defaultValue;
+        /*Wang:2012-11-15*/
+        Drawable avatar = null;
+        if(mAvatar != null){
+           avatar = mAvatar;
+        }else{
+        	Bitmap bm = NameAvatarUtils.makeNameAvatarBitmap(context, getName());
+        	if(bm == null){
+        		avatar = defaultValue;
+        	}else{
+        		avatar = new BitmapDrawable(bm);
+        	}
+        }
+        return avatar;
     }
 
     public static void init(final Context context) {

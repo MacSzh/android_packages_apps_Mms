@@ -64,4 +64,8 @@
     <color name="quickmessage_body_light_bg">#fff3f3f3</color>
     <color name="dividers">#eeeeee</color>
     <color name="transparent">#00000000</color>
+    
+     <!--Wang 2012-11-1 name avatar ui -->
+     <color name="shendu_name_avatar_background">#8cd9ec</color>
+     <color name="shendu_name_avatar_text_color">#FFFFFF</color>
 </resources>
