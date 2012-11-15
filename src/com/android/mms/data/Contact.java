@@ -357,12 +357,16 @@ public class Contact {
         if(mAvatar != null){
            avatar = mAvatar;
         }else{
-        	Bitmap bm = NameAvatarUtils.makeNameAvatarBitmap(context, getName());
-        	if(bm == null){
+          if (!TextUtils.isEmpty(mName)) {
+        	  Bitmap bm = NameAvatarUtils.makeNameAvatarBitmap(context, mName);
+        	  if(bm == null){
         		avatar = defaultValue;
-        	}else{
+        	  } else {
         		avatar = new BitmapDrawable(bm);
-        	}
+        	  }
+		   } else {
+        	avatar = defaultValue;
+		   }
         }
         return avatar;
     }
