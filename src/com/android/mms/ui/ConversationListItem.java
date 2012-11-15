@@ -81,7 +81,8 @@ public class ConversationListItem extends RelativeLayout implements Contact.Upda
         super(context, attrs);
     	mContext = context;
         if (sDefaultContactImage == null) {
-            sDefaultContactImage = context.getResources().getDrawable(R.drawable.ic_contact_picture);
+            /*Wang: 2012-11-15*/
+            sDefaultContactImage = context.getResources().getDrawable(R.drawable.ic_contact_picture_1);
         }
     }
 
