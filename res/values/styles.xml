@@ -44,5 +44,9 @@
     <style name="NotificationSubjectText">
         <item name="android:textColor">#999999</item>
     </style>
+    
+    <style name="QuickMessagePopupTheme" parent="@android:style/Theme.Holo.Light.Dialog">
+        <item name="android:actionBarStyle">@*android:style/Widget.Holo.Light.ActionBar</item>
+    </style>
 
 </resources>

@@ -63,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_menu_msg_compose_holo_dark"
-            android:background="?android:attr/selectableItemBackground"
+            android:background="@drawable/widget_conversation_read_selector"
             android:paddingLeft="4dip"
             android:paddingBottom="4dip" />
     </LinearLayout>
@@ -73,6 +73,8 @@
         android:layout_height="0dip"
         android:layout_weight="1"
         android:background="@drawable/gradient_bg_widget_holo"
+        android:listSelector="#00000000"
+        android:divider="@drawable/shendu_div_widget_divider"
         android:cacheColorHint="@color/transparent" />
     <ImageView
         android:layout_width="match_parent"
