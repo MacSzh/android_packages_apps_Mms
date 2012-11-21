@@ -441,4 +441,5 @@
 
     <!-- Add menu for 'Add SMS to calendar remind' -->
     <string name="menu_add_to_calendar">添加日历提醒</string>
+        <string name="insert_contact" >"插入联系人"</string>
 </resources>

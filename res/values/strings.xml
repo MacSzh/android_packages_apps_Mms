@@ -890,4 +890,5 @@
 
     <!-- Add menu for 'Add SMS to calendar remind' -->
     <string name="menu_add_to_calendar">Add to calendar</string>
+     <string name="insert_contact" >"Insert contact"</string>
 </resources>

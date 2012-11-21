@@ -235,7 +235,7 @@ public class ComposeMessageActivity extends Activity
     private static final int MENU_CALL_RECIPIENT        = 5;
     private static final int MENU_CONVERSATION_LIST     = 6;
     private static final int MENU_DEBUG_DUMP            = 7;
-
+    private static final int MENU_SHARE_CONTACT  = 55;
     // Context menu ID
     private static final int MENU_VIEW_CONTACT          = 12;
     private static final int MENU_ADD_TO_CONTACTS       = 13;
@@ -2761,7 +2761,8 @@ public class ComposeMessageActivity extends Activity
         super.onPrepareOptionsMenu(menu) ;
 
         menu.clear();
-
+        //add by shendu liuchuan
+        menu.add(0, MENU_SHARE_CONTACT, 0, R.string.insert_contact);
         if (isRecipientCallable()) {
             MenuItem item = menu.add(0, MENU_CALL_RECIPIENT, 0, R.string.menu_call)
                 .setIcon(R.drawable.ic_menu_call)
@@ -2930,6 +2931,15 @@ public class ComposeMessageActivity extends Activity
                 break;
             case MENU_ADD_TEMPLATE:
                 startLoadingTemplates();
+                break;
+            case MENU_SHARE_CONTACT://add by shendu liuchuan
+            	Intent intent = new Intent();
+    			intent.putExtra("from", 100);
+    			ComponentName componentName = new ComponentName("com.android.contacts",
+    					"com.android.contacts.activities.ShenDuContactSelectionActivity");
+    			intent.setComponent(componentName);
+    			intent.setAction("shendu.intent.action.PICK_ACTION");
+    			startActivityForResult(intent, 1);
                 break;
         }
 
@@ -3219,6 +3229,12 @@ public class ComposeMessageActivity extends Activity
 				addContacts(result);
 			}
 		}
+		if (requestCode == 1 && resultCode == 0) {
+			if (data != null) {
+				long[] result = data.getLongArrayExtra("data");
+				shareContacts(result);
+			}
+		}
         if (requestCode == REQUEST_CODE_PICK) {
             mWorkingMessage.asyncDeleteDraftSmsMessage(mConversation);
         }
@@ -3362,6 +3378,36 @@ public class ComposeMessageActivity extends Activity
  		}
 // 		mRecipientsEditor.setText(phoneNumberBuffer);
  	}
+ 	
+ 	private void shareContacts(long[] ids) {
+ 		StringBuffer inBuffer = new StringBuffer();
+ 		for (int i = 0; i < ids.length; i++) {
+ 			long id = ids[i];
+ 			inBuffer.append(id);
+ 			if (i != ids.length - 1) {
+ 				inBuffer.append(",");
+ 			}
+ 		}
+ 		Cursor phones = getContentResolver().query(Phone.CONTENT_URI, null,
+ 				Phone.CONTACT_ID + " in (" + inBuffer + ")", null, null);
+ 		StringBuffer phoneNumberBuffer = new StringBuffer();
+ 		if (phones.moveToFirst()) {
+ 			do {
+ 				String phoneNumber = phones.getString(phones
+ 						.getColumnIndex(Phone.NUMBER));
+ 				String nameString = phones.getString(phones
+ 						.getColumnIndex(Phone.DISPLAY_NAME));
+ 				if (!TextUtils.isEmpty(phoneNumber)&&!TextUtils.isEmpty(nameString)) {
+ 					mTextEditor.append(" "+nameString+" ");
+ 					mTextEditor.append(phoneNumber+";");
+ 				}
+ 			} while (phones.moveToNext());
+
+ 		} else {
+ 		}
+// 		mRecipientsEditor.setText(phoneNumberBuffer);
+ 	}
+ 	
     private void processPickResult(final Intent data) {
         // The EXTRA_PHONE_URIS stores the phone's urls that were selected by user in the
         // multiple phone picker.
