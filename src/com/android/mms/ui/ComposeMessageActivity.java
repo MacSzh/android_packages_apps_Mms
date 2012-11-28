@@ -1921,8 +1921,9 @@ public class ComposeMessageActivity extends Activity
         if (mMsgListAdapter.getCount() > 0) {
 			actionBar.setDisplayHomeAsUpEnabled(false);
 			Contact contact = Contact.get(list.get(0).getNumber(), false);
+          //Wang: 2012-11-27
 			Drawable avatarDrawable = contact.getAvatar(this, getResources()
-					.getDrawable(R.drawable.ic_contact_picture));
+					.getDrawable(R.drawable.ic_contact_picture_1));
 			actionBar.setIcon(avatarDrawable);
 		}
         actionBar.setTitle(title);
