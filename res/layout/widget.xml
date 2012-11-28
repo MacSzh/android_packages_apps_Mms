@@ -63,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_menu_msg_compose_holo_dark"
-            android:background="@drawable/widget_conversation_read_selector"
+            android:background="@drawable/widget_conversation_edit_selector"
             android:paddingLeft="4dip"
             android:paddingBottom="4dip" />
     </LinearLayout>
