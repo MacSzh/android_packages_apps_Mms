@@ -714,8 +714,16 @@ public class MessageListItem extends LinearLayout implements
         // know whether the message has been delivered. For mms, msgItem.mDeliveryStatus set
         // to MessageItem.DeliveryStatus.RECEIVED simply means the setting requesting a
         // delivery report was turned on when the message was sent. Yes, it's confusing!
-        if ((msgItem.isOutgoingMessage() && msgItem.isFailedMessage()) ||
-                msgItem.mDeliveryStatus == MessageItem.DeliveryStatus.FAILED) {
+        	if(DEBUG)
+        		Log.i(TAG, "===="+(msgItem.isSms()?"[sms]":"[mms]")+":"
+        				+(msgItem.isOutgoingMessage()?"[out]":"[in]")+" ::"
+        				+(msgItem.isFailedMessage()?"[failed]":"[not failed]"
+        				+" and deliveryStatus="
+        				+((msgItem.mDeliveryStatus == MessageItem.DeliveryStatus.FAILED)?"DeliveryStatus.FAILED":msgItem.mDeliveryStatus)
+        				)
+        			);
+        if ((msgItem.isOutgoingMessage() && msgItem.isFailedMessage()) /*||
+                msgItem.mDeliveryStatus == MessageItem.DeliveryStatus.FAILED*/) {
             mDeliveredIndicator.setImageResource(R.drawable.ic_list_alert_sms_failed);
             mDeliveredIndicator.setVisibility(View.VISIBLE);
         } else if (msgItem.isSms() &&
