@@ -122,12 +122,13 @@
         android:dependency="pref_key_enable_notifications"
         android:summary="@string/pref_quickmessage_summary"
         android:defaultValue="false" />
-
-    <CheckBoxPreference
+    
+    <!-- Wang: 2012-11-30 -->
+    <!-- <CheckBoxPreference
         android:key="pref_dark_theme"
         android:title="@string/pref_dark_theme_title"
         android:summary="@string/pref_dark_theme_summary"
-        android:defaultValue="false" />
+        android:defaultValue="false" />  -->
 
     <CheckBoxPreference
         android:key="pref_key_qm_lockscreen"

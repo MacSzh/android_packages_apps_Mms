@@ -152,7 +152,8 @@ public class MessagingPreferenceActivity extends PreferenceActivity
         mEnableQuickMessagePref = (CheckBoxPreference) findPreference(QUICKMESSAGE_ENABLED);
         mEnableQmLockscreenPref = (CheckBoxPreference) findPreference(QM_LOCKSCREEN_ENABLED);
         mEnableQmCloseAllPref = (CheckBoxPreference) findPreference(QM_CLOSE_ALL_ENABLED);
-        mEnableQmDarkThemePref = (CheckBoxPreference) findPreference(QM_DARK_THEME_ENABLED);
+        //Wang: rm theme 2012-11-30
+//        mEnableQmDarkThemePref = (CheckBoxPreference) findPreference(QM_DARK_THEME_ENABLED);
 
         mVibrateEntries = getResources().getTextArray(R.array.prefEntries_vibrateWhen);
         mVibrateValues = getResources().getTextArray(R.array.prefValues_vibrateWhen);
@@ -300,7 +301,8 @@ public class MessagingPreferenceActivity extends PreferenceActivity
     private void setEnabledQmDarkThemePref() {
         // The "Use dark theme" setting is really stored in our own prefs. Read the
         // current value and set the checkbox to match.
-        mEnableQmDarkThemePref.setChecked(getQmDarkThemeEnabled(this));
+    	//Wang:2012-11-30
+//        mEnableQmDarkThemePref.setChecked(getQmDarkThemeEnabled(this));
     }
 
     private void setSmsDisplayLimit() {
@@ -380,10 +382,10 @@ public class MessagingPreferenceActivity extends PreferenceActivity
             // Update the actual "enable close all" value that is stored in secure settings.
             enableQmCloseAll(mEnableQmCloseAllPref.isChecked(), this);
 
-        } else if (preference == mEnableQmDarkThemePref) {
+        } /*Wang:2012-11-30*//*else if (preference == mEnableQmDarkThemePref) {
             // Update the actual "enable dark theme" value that is stored in secure settings.
             enableQmDarkTheme(mEnableQmDarkThemePref.isChecked(), this);
-        }
+        }*/
 
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
