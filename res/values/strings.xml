@@ -508,7 +508,7 @@
     <!-- Status in "Report" window -->
     <string name="status_received">Received</string>
     <!-- Status in "Report" window -->
-    <string name="status_failed">Unsuccessful</string>
+    <string name="status_failed">UnKnown</string>
     <!-- Status in "Report" window -->
     <string name="status_unread">Unread</string>
     <!-- Status in "Report" window -->

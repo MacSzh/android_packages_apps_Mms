@@ -235,7 +235,7 @@
     <string name="status_pending" msgid="2739860824607984892">"等待"</string>
     <string name="status_read" msgid="7576195253780627332">"已讀取"</string>
     <string name="status_received" msgid="7264334589461906965">"已接收"</string>
-    <string name="status_failed" msgid="1998776666856593544">"失敗"</string>
+    <string name="status_failed" msgid="1998776666856593544">"未知"</string>
     <string name="status_unread" msgid="8555305495998700198">"未讀"</string>
     <string name="status_rejected" msgid="2613641949065942678">"已拒絕"</string>
     <string name="recipient_label" msgid="3922667485312634446">"收件者： "</string>
