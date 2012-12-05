@@ -373,7 +373,7 @@
     <string name="template_insert">插入模板</string>
     <string name="template_gesture_draw">在下面的空白处画出您想关联的手势</string>
     <string name="template_not_present_error">您没有定义任何模板</string>
-    <string name="template_not_present_error_title">错误</string>
+    <string name="template_not_present_error_title">对不起</string>
     <string name="template_select">选择一个模板</string>
     <string name="template_cancel_confirm_title">警告</string>
     <string name="template_cancel_confirm_text">这个模板将会被删除。您确定要继续？</string>
