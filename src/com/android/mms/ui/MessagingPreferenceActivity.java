@@ -130,6 +130,9 @@ public class MessagingPreferenceActivity extends PreferenceActivity
         // we have to reload it whenever we resume.
         setEnabledNotificationsPref();
         registerListeners();
+        PreferenceCategory extraCategory =
+                (PreferenceCategory)findPreference("pref_extra_settings");
+        extraCategory.removePreference(findPreference(INPUT_TYPE));
     }
 
     private void loadPrefs() {
@@ -147,7 +150,6 @@ public class MessagingPreferenceActivity extends PreferenceActivity
         mVibrateWhenPref = (ListPreference) findPreference(NOTIFICATION_VIBRATE_WHEN);
         mManageTemplate = findPreference(MANAGE_TEMPLATES);
         mGestureSensitivity = (ListPreference) findPreference(GESTURE_SENSITIVITY);
-
         // QuickMessage
         mEnableQuickMessagePref = (CheckBoxPreference) findPreference(QUICKMESSAGE_ENABLED);
         mEnableQmLockscreenPref = (CheckBoxPreference) findPreference(QM_LOCKSCREEN_ENABLED);
