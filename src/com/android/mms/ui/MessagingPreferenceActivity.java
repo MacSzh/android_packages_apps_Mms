@@ -130,9 +130,6 @@ public class MessagingPreferenceActivity extends PreferenceActivity
         // we have to reload it whenever we resume.
         setEnabledNotificationsPref();
         registerListeners();
-        PreferenceCategory extraCategory =
-                (PreferenceCategory)findPreference("pref_extra_settings");
-        extraCategory.removePreference(findPreference(INPUT_TYPE));
     }
 
     private void loadPrefs() {
@@ -159,7 +156,9 @@ public class MessagingPreferenceActivity extends PreferenceActivity
 
         mVibrateEntries = getResources().getTextArray(R.array.prefEntries_vibrateWhen);
         mVibrateValues = getResources().getTextArray(R.array.prefValues_vibrateWhen);
-
+//        PreferenceCategory extraCategory =
+//                (PreferenceCategory)findPreference("pref_extra_settings");
+//        extraCategory.removePreference(findPreference(INPUT_TYPE));
         setMessagePreferences();
     }
 
