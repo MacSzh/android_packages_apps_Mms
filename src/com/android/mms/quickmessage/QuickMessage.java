@@ -17,6 +17,7 @@
 package com.android.mms.quickmessage;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.widget.EditText;
 
 import com.android.mms.transaction.MessagingNotification.NotificationInfo;
@@ -83,4 +84,13 @@ public class QuickMessage {
     public long getThreadId() {
         return mContent.mThreadId;
     }
+    
+    public boolean getMIsSms(){
+    	return mContent.mIsSms;
+    }
+    
+    public long getMegId(){
+    	return mContent.mSmsId;
+    }
+
 }

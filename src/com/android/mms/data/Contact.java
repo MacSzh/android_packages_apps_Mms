@@ -94,6 +94,7 @@ public class Contact {
     private boolean mIsMe;          // true if this contact is me!
     private boolean mSendToVoicemail;   // true if this contact should not put up notification
 
+    
     public interface UpdateListener {
         public void onUpdate(Contact updated);
     }

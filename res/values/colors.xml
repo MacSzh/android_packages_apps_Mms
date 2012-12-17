@@ -60,10 +60,12 @@
     <!-- New Background colors from layouts to make theme chooser apk easier to theme -->
     <color name="background">#ffffff</color>
     <color name="darkgray_backgrounds">#888888</color>
-    <color name="quickmessage_body_dark_bg">#ff7d7e80</color>
-    <color name="quickmessage_body_light_bg">#ffbbbcbf</color>
+    <color name="quickmessage_body_dark_bg">#fff5f5f5</color>
+    <color name="quickmessage_body_light_bg">#fff5f5f5</color>
     <color name="dividers">#eeeeee</color>
     <color name="transparent">#00000000</color>
+    
+    <color name="shendu_name_popo_text_color">#4b4b4d</color>
     
      <!--Wang 2012-11-1 name avatar ui -->
      <color name="shendu_name_avatar_background">#8cd9ec</color>

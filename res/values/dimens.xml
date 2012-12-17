@@ -25,5 +25,8 @@ All Rights Reserved. -->
     <!-- Wang: Name Avatar params -->  
     <dimen name="shendu_name_avatar_size">64dip</dimen>  <!-- Wang: 2012-11-12  -->
     <dimen name="shendu_name_avatar_text_size">32sp</dimen> <!-- Wang: 2012-11-14 -->
+    
+    <!-- Shu: popo params -->
+    <dimen name="shendu_popo_quickcontactbadge_margin">10dp</dimen>
 
 </resources>

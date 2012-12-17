@@ -22,6 +22,7 @@ import android.app.Dialog;
 import android.app.KeyguardManager;
 import android.app.LoaderManager;
 import android.app.NotificationManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
@@ -32,6 +33,8 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.PowerManager;
@@ -74,15 +77,19 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
+import com.android.mms.MmsApp;
 import com.android.mms.MmsConfig;
 import com.android.mms.R;
 import com.android.mms.data.Contact;
 import com.android.mms.data.Conversation;
+import com.android.mms.data.WorkingMessage;
+import com.android.mms.data.Conversation.ConversationQueryHandler;
 import com.android.mms.templates.TemplatesProvider.Template;
 import com.android.mms.transaction.MessagingNotification;
 import com.android.mms.transaction.MessagingNotification.NotificationInfo;
 import com.android.mms.transaction.SmsMessageSender;
 import com.android.mms.ui.ImageAdapter;
+import com.android.mms.ui.MessageItem;
 import com.android.mms.ui.MessageUtils;
 import com.android.mms.ui.MessagingPreferenceActivity;
 import com.android.mms.util.EmojiParser;
@@ -98,6 +105,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import android.provider.Telephony.Mms;
+import android.provider.Telephony.Sms;
+
 public class QuickMessagePopup extends Activity implements
     LoaderManager.LoaderCallbacks<Cursor> {
     private static final String LOG_TAG = "QuickMessagePopup";
@@ -112,9 +122,17 @@ public class QuickMessagePopup extends Activity implements
     public static final String SMS_NOTIFICATION_OBJECT_EXTRA =
             "com.android.mms.NOTIFICATION_OBJECT";
 
+    /**shutao 2012-12-13*/
+    public static final String SMS_ROM_URI = 
+    		"com.android.mms.SMS_FROM_URI";
+    
+    
     // Templates support
     private static final int DIALOG_TEMPLATE_SELECT        = 1;
     private static final int DIALOG_TEMPLATE_NOT_AVAILABLE = 2;
+    
+    private static final int DELETE_MESSAGE_TOKEN  = 9700;
+    
     private SimpleCursorAdapter mTemplatesCursorAdapter;
     private int mNumTemplates = 0;
 
@@ -157,7 +175,8 @@ public class QuickMessagePopup extends Activity implements
     private AlertDialog mSmileyDialog;
     private AlertDialog mEmojiDialog;
     private View mEmojiView;
-
+    private ContentResolver mContentResolver;
+    private BackgroundQueryHandler mBackgroundQueryHandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -165,11 +184,13 @@ public class QuickMessagePopup extends Activity implements
         // Initialise the message list and other variables
         mContext = this;
         mMessageList = new ArrayList<QuickMessage>();
-        mDefaultContactImage = getResources().getDrawable(R.drawable.ic_contact_picture);
+        mDefaultContactImage = getResources().getDrawable(R.drawable.ic_contact_picture_1);
         mNumTemplates = getTemplatesCount();
         mPowerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-
+        
+        mContentResolver = getContentResolver();
+        mBackgroundQueryHandler = new BackgroundQueryHandler(mContentResolver);
         // Get the preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(mContext);
         mFullTimestamp = prefs.getBoolean(MessagingPreferenceActivity.FULL_TIMESTAMP, false);
@@ -191,6 +212,28 @@ public class QuickMessagePopup extends Activity implements
         parseIntent(getIntent().getExtras(), false);
     }
 
+    private final class BackgroundQueryHandler extends ConversationQueryHandler {
+        public BackgroundQueryHandler(ContentResolver contentResolver) {
+            super(contentResolver);
+        }
+
+		@Override
+		public void setDeleteToken(int token) {
+			// TODO Auto-generated method stub
+	
+			super.setDeleteToken(token);
+		}
+
+		@Override
+		protected void onDeleteComplete(int token, Object cookie, int result) {
+			// TODO Auto-generated method stub
+		
+			super.onDeleteComplete(token, cookie, result);
+		}
+        
+        
+    }
+    
     private void setupViews() {
 
         // Load the main views
@@ -273,6 +316,7 @@ public class QuickMessagePopup extends Activity implements
 
         // Parse the intent and ensure we have a notification object to work with
         NotificationInfo nm = (NotificationInfo) extras.getParcelable(SMS_NOTIFICATION_OBJECT_EXTRA);
+
         if (nm != null) {
             QuickMessage qm = new QuickMessage(extras.getString(SMS_FROM_NAME_EXTRA),
                     extras.getString(SMS_FROM_NUMBER_EXTRA), nm);
@@ -993,7 +1037,7 @@ public class QuickMessagePopup extends Activity implements
         }
 
         @Override
-        public Object instantiateItem(View collection, int position) {
+        public Object instantiateItem(View collection, final int position) {
 
             // Load the layout to be used
             LayoutInflater inflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -1014,8 +1058,11 @@ public class QuickMessagePopup extends Activity implements
             TextView qmTimestamp = (TextView) layout.findViewById(R.id.timestampTextView);
             QuickContactBadge qmContactBadge = (QuickContactBadge) layout.findViewById(R.id.contactBadge);
 
+            /**shutao 2012-12-12*/
+            ImageButton qmDeleteButton = (ImageButton)layout.findViewById(R.id.deleteButton);
+            
             // Retrieve the current message
-            QuickMessage qm = mMessageList.get(position);
+            final QuickMessage qm = mMessageList.get(position);
             if (qm != null) {
                 if (DEBUG)
                     Log.d(LOG_TAG, "instantiateItem(): Creating page #" + (position + 1) + " for message from "
@@ -1106,6 +1153,27 @@ public class QuickMessagePopup extends Activity implements
                         }
                     }
                 });
+                
+                qmDeleteButton.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+					        AlertDialog.Builder builder = new AlertDialog.Builder(QuickMessagePopup.this);
+					        builder.setCancelable(true);
+					        builder.setMessage(R.string.confirm_delete_message);
+					        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+								
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									// TODO Auto-generated method stub
+									deleMsg(qm, position);
+								}
+							});
+					        builder.setNegativeButton(R.string.no, null);
+					        builder.show();
+					}
+				});
 
                 // Add the layout to the viewpager
                 ((ViewPager) collection).addView(layout);
@@ -1113,6 +1181,50 @@ public class QuickMessagePopup extends Activity implements
             return layout;
         }
 
+        
+        private void deleMsg(final QuickMessage qm ,final int position ){
+        	new AsyncTask<Void, Void, Void>() {
+                protected Void doInBackground(Void... none) {
+                	 Uri msgUri;
+                	 markCurrentMessageRead(qm);
+                	 msgUri= Mms.CONTENT_URI.buildUpon().appendPath(
+	                            Long.toString(qm.getMegId())).build();
+                    if (qm.getMIsSms()) {
+                       
+                    	   msgUri= Sms.CONTENT_URI.buildUpon().appendPath(
+	                            Long.toString(qm.getMegId())).build();
+                        MmsApp.getApplication().getPduLoaderManager()
+                            .removePdu(msgUri);
+                        // Delete the message *after* we've removed the thumbnails because we
+                        // need the pdu and slideshow for removeThumbnailsFromCache to work.
+                    }
+                 
+                    mBackgroundQueryHandler.startDelete(DELETE_MESSAGE_TOKEN,
+                            null, msgUri ,
+                            null, null);
+                    
+                    return null;
+                }
+
+				@Override
+				protected void onPostExecute(Void result) {
+					// TODO Auto-generated method stub
+					super.onPostExecute(result);
+				    mMessageList.remove(position);
+				      
+                    mPagerAdapter.notifyDataSetChanged();
+                    mMessagePager.setCurrentItem(position);
+                    updateMessageCounter();
+                    if(mMessageList.size() == 0){
+                    	  clearNotification(true);
+                    	  finish();
+                    }
+				}
+                
+                
+            }.execute();
+        }
+        
         /**
          * This method sends the supplied message in reply to the supplied qm and then
          * moves to the next or previous message as appropriate. If this is the last qm
@@ -1204,6 +1316,9 @@ public class QuickMessagePopup extends Activity implements
         @Override
         public void onPageScrolled(int arg0, float arg1, int arg2) {}
    }
+    
+    
+
 
 
 }

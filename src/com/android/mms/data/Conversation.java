@@ -341,7 +341,7 @@ public class Conversation {
                         }
                     }
 
-                    if (needUpdate) {
+                 if (needUpdate) {
                         LogTag.debug("markAsRead: update read/seen for thread uri: " +
                                 threadUri);
                         mContext.getContentResolver().update(threadUri, sReadContentValues,

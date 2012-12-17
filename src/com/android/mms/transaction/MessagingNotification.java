@@ -113,7 +113,7 @@ public class MessagingNotification {
 
     // This must be consistent with the column constants below.
     private static final String[] SMS_STATUS_PROJECTION = new String[] {
-        Sms.THREAD_ID, Sms.DATE, Sms.ADDRESS, Sms.SUBJECT, Sms.BODY };
+        Sms.THREAD_ID, Sms.DATE, Sms.ADDRESS, Sms.SUBJECT, Sms.BODY , Sms._ID};
 
     // These must be consistent with MMS_STATUS_PROJECTION and
     // SMS_STATUS_PROJECTION.
@@ -124,6 +124,7 @@ public class MessagingNotification {
     private static final int COLUMN_SUBJECT     = 3;
     private static final int COLUMN_SUBJECT_CS  = 4;
     private static final int COLUMN_SMS_BODY    = 4;
+    private static final int COLUMN_SMS_ID      = 5;
 
     private static final String[] SMS_THREAD_ID_PROJECTION = new String[] { Sms.THREAD_ID };
     private static final String[] MMS_THREAD_ID_PROJECTION = new String[] { Mms.THREAD_ID };
@@ -231,6 +232,7 @@ public class MessagingNotification {
     public static void nonBlockingUpdateNewMessageIndicator(final Context context,
             final long newMsgThreadId,
             final boolean isStatusMessage) {
+       
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -344,6 +346,12 @@ public class MessagingNotification {
         public final int mAttachmentType;
         public final String mSubject;
         public final long mThreadId;
+        /**shutao 2012-12-12*/
+        public final long mSmsId;
+        
+        public long getSmsId(){
+        	return this.mSmsId;
+        }
 
         /**
          * @param isSms true if sms, false if mms
@@ -363,7 +371,7 @@ public class MessagingNotification {
                 Intent clickIntent, String message, String subject,
                 CharSequence ticker, long timeMillis, String title,
                 Bitmap attachmentBitmap, Contact sender,
-                int attachmentType, long threadId) {
+                int attachmentType, long threadId ,long smsId) {
             mIsSms = isSms;
             mClickIntent = clickIntent;
             mMessage = message;
@@ -375,8 +383,9 @@ public class MessagingNotification {
             mSender = sender;
             mAttachmentType = attachmentType;
             mThreadId = threadId;
+            mSmsId = smsId;
         }
-
+        																		
         public long getTime() {
             return mTimeMillis;
         }
@@ -497,6 +506,7 @@ public class MessagingNotification {
             arg0.writeParcelable(mAttachmentBitmap, 0);
             arg0.writeInt(mAttachmentType);
             arg0.writeLong(mThreadId);
+            arg0.writeLong(mSmsId);
         }
 
         public NotificationInfo(Parcel in) {
@@ -511,6 +521,7 @@ public class MessagingNotification {
             mSender = null;
             mAttachmentType = in.readInt();
             mThreadId = in.readLong();
+            mSmsId = in.readLong();
         }
 
         public static final Parcelable.Creator<NotificationInfo> CREATOR = new Parcelable.Creator<NotificationInfo>() {
@@ -654,10 +665,9 @@ public class MessagingNotification {
                         timeMillis,
                         attachedPicture,
                         contact,
-                        attachmentType);
-
+                        attachmentType,
+                        msgId);
                 sNotificationSet.add(info);
-
                 threads.add(threadId);
             }
         } finally {
@@ -732,7 +742,12 @@ public class MessagingNotification {
 
         try {
             while (cursor.moveToNext()) {
-                String address = cursor.getString(COLUMN_SMS_ADDRESS);
+            	
+            	  long msgId = cursor.getLong(COLUMN_SMS_ID);
+            	  
+               
+ 
+            	  String address = cursor.getString(COLUMN_SMS_ADDRESS);
 
                 Contact contact = Contact.get(address, false);
                 if (contact.getSendToVoicemail()) {
@@ -743,6 +758,7 @@ public class MessagingNotification {
                 String message = cursor.getString(COLUMN_SMS_BODY);
                 long threadId = cursor.getLong(COLUMN_THREAD_ID);
                 long timeMillis = cursor.getLong(COLUMN_DATE);
+        
 
                 if (Log.isLoggable(LogTag.APP, Log.VERBOSE))
                 {
@@ -754,8 +770,7 @@ public class MessagingNotification {
                 NotificationInfo info = getNewMessageNotificationInfo(context, true /* isSms */,
                         address, message, null /* subject */,
                         threadId, timeMillis, null /* attachmentBitmap */,
-                        contact, WorkingMessage.TEXT);
-
+                        contact, WorkingMessage.TEXT, msgId );
                 sNotificationSet.add(info);
 
                 threads.add(threadId);
@@ -776,7 +791,8 @@ public class MessagingNotification {
             long timeMillis,
             Bitmap attachmentBitmap,
             Contact contact,
-            int attachmentType) {
+            int attachmentType,
+            long msmId) {
         Intent clickIntent = ComposeMessageActivity.createIntent(context, threadId);
         clickIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -792,7 +808,7 @@ public class MessagingNotification {
             return null;
         return new NotificationInfo(isSms,
                 clickIntent, message, subject, ticker, timeMillis,
-                senderInfoName, attachmentBitmap, contact, attachmentType, threadId);
+                senderInfoName, attachmentBitmap, contact, attachmentType, threadId , msmId );
     }
 
     public static void cancelNotification(Context context, int notificationId) {
@@ -841,11 +857,11 @@ public class MessagingNotification {
             }
             return;
         }
-
+   
         // Figure out what we've got -- whether all sms's, mms's, or a mixture of both.
         int messageCount = sNotificationSet.size();
         NotificationInfo mostRecentNotification = sNotificationSet.first();
-
+        
         final Notification.Builder noti = new Notification.Builder(context)
                 .setWhen(mostRecentNotification.mTimeMillis);
 
@@ -981,6 +997,7 @@ public class MessagingNotification {
         Intent qmIntent = null;
         if (mostRecentNotification.mIsSms) {
             // QuickMessage support is only for SMS
+
             qmIntent = new Intent();
             qmIntent.setClass(context, QuickMessagePopup.class);
             qmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP |
@@ -988,6 +1005,7 @@ public class MessagingNotification {
             qmIntent.putExtra(QuickMessagePopup.SMS_FROM_NAME_EXTRA, mostRecentNotification.mSender.getName());
             qmIntent.putExtra(QuickMessagePopup.SMS_FROM_NUMBER_EXTRA, mostRecentNotification.mSender.getNumber());
             qmIntent.putExtra(QuickMessagePopup.SMS_NOTIFICATION_OBJECT_EXTRA, mostRecentNotification);
+
         }
 
         // Start getting the notification ready

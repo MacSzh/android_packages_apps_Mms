@@ -4386,6 +4386,7 @@ public class ComposeMessageActivity extends Activity
 
         @Override
         protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
+  
             switch(token) {
                 case MESSAGE_LIST_QUERY_TOKEN:
                     mConversation.blockMarkAsRead(false);
@@ -4529,6 +4530,7 @@ public class ComposeMessageActivity extends Activity
                 case DELETE_MESSAGE_TOKEN:
                     // Update the notification for new messages since they
                     // may be deleted.
+
                     MessagingNotification.nonBlockingUpdateNewMessageIndicator(
                             ComposeMessageActivity.this, MessagingNotification.THREAD_NONE, false);
                     // Update the notification for failed messages since they
