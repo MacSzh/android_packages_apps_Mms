@@ -2048,7 +2048,7 @@ public class ComposeMessageActivity extends Activity
         setContentView(gestureOverlayView);
         setProgressBarVisibility(false);
 
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE |
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_UNSPECIFIED |
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
 
         // Initialize members for UI elements.

@@ -94,12 +94,11 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <ScrollView
+            <LinearLayout
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/attachment_editor_scroll_view"
                 android:layout_width="match_parent"
-                android:layout_height="0dip"
-                android:layout_weight="1.0" >
+                android:layout_height="130dp" >
 
                 <view
                     android:id="@+id/attachment_editor"
@@ -132,7 +131,7 @@
                         android:layout_height="wrap_content"
                         android:layout="@layout/slideshow_attachment_view" />
                 </view>
-            </ScrollView>
+            </LinearLayout>
 
             <!-- Divider -->
 
