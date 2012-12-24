@@ -38,6 +38,7 @@
             android:id="@+id/recipients_editor_stub"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout="@layout/recipients_editor" />
 
         <EditText
@@ -51,7 +52,9 @@
             android:textAppearance="?android:attr/textAppearanceMediumInverse"
             android:textColor="@color/compose_message_edit_text"
             android:visibility="gone" />
-         <LinearLayout
+                
+                
+        <LinearLayout
             android:layout_width="match_parent"
             android:gravity="center_horizontal"
             android:layout_height="wrap_content" >
@@ -64,6 +67,7 @@
                 android:numColumns="3" >
             </GridView>
         </LinearLayout>
+        
     </LinearLayout>
 
     <LinearLayout
@@ -81,65 +85,68 @@
             class="com.android.mms.ui.MessageListView"
             android:cacheColorHint="@color/background"
             android:fadingEdge="none"
-            android:listSelector="#00000000"
             android:paddingBottom="@dimen/input_text_height_adjusted"
             android:scrollbarAlwaysDrawVerticalTrack="false"
             android:scrollbarStyle="insideOverlay"
             android:smoothScrollbar="false"
             android:transcriptMode="disabled"
-            android:visibility="gone" />
+            android:visibility="gone" 
+            android:stackFromBottom="true"
+            android:layout_marginBottom="1dip"
+            android:listSelector="#00000000"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <LinearLayout
+            <ScrollView
                 xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/attachment_editor_scroll_view"
+                android:layout_weight="1.0"
                 android:layout_width="match_parent"
-                android:layout_height="130dp" >
+                android:layout_height="0dip">
 
-                <view
-                    android:id="@+id/attachment_editor"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    class="com.android.mms.ui.AttachmentEditor"
-                    android:orientation="vertical" >
+              <view
+                  android:id="@+id/attachment_editor"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  class="com.android.mms.ui.AttachmentEditor"
+                  android:orientation="vertical">
 
-                    <ViewStub
-                        android:id="@+id/image_attachment_view_stub"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout="@layout/image_attachment_view" />
+                  <ViewStub 
+                      android:id="@+id/image_attachment_view_stub"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout="@layout/image_attachment_view"/>
 
-                    <ViewStub
-                        android:id="@+id/video_attachment_view_stub"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout="@layout/video_attachment_view" />
+                  <ViewStub 
+                      android:id="@+id/video_attachment_view_stub"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout="@layout/video_attachment_view"/>
 
-                    <ViewStub
-                        android:id="@+id/audio_attachment_view_stub"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout="@layout/audio_attachment_view" />
+                  <ViewStub 
+                      android:id="@+id/audio_attachment_view_stub"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout="@layout/audio_attachment_view"/>
 
-                    <ViewStub
-                        android:id="@+id/slideshow_attachment_view_stub"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout="@layout/slideshow_attachment_view" />
-                </view>
-            </LinearLayout>
+                  <ViewStub 
+                      android:id="@+id/slideshow_attachment_view_stub"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout="@layout/slideshow_attachment_view"/>
+              </view>
+            </ScrollView>
 
             <!-- Divider -->
 
-            <View
+            <View 
+                android:background="@color/dividers"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
                 android:visibility="gone"
-                android:background="@color/dividers" />
+                android:layout_height="1dp" />
 
             <LinearLayout
                 android:id="@+id/bottom_panel"
@@ -155,7 +162,8 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="5dp"
                     android:src="@drawable/ic_dialog_attach" />
-
+                
+                
                 <EditText
                     android:id="@+id/embedded_text_editor"
                     android:layout_width="0dip"
@@ -225,5 +233,4 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-
 </LinearLayout>
