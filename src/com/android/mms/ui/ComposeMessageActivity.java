@@ -1950,7 +1950,7 @@ public class ComposeMessageActivity extends Activity
             mRecipientsPicker = (ImageButton)findViewById(R.id.recipients_picker);
         }
         mRecipientsPicker.setOnClickListener(this);
-         mChipsRecipientAdapter=   new ChipsRecipientAdapter(this);
+        mChipsRecipientAdapter=   new ChipsRecipientAdapter(this);
         mRecipientsEditor.setAdapter(mChipsRecipientAdapter);
         mRecipientsEditor.populate(recipients);
         mRecipientsEditor.setOnCreateContextMenuListener(mRecipientsMenuCreateListener);
@@ -2038,14 +2038,14 @@ public class ComposeMessageActivity extends Activity
         mLibrary = TemplateGesturesLibrary.getStore(this);
 
         int layout = R.layout.compose_message_activity;
-
-        GestureOverlayView gestureOverlayView = new GestureOverlayView(this);
+        setContentView(layout);
+        GestureOverlayView gestureOverlayView = (GestureOverlayView) findViewById(R.id.gestures);
         View inflate = getLayoutInflater().inflate(layout, null);
-        gestureOverlayView.addView(inflate);
+//        gestureOverlayView.addView(inflate);
         gestureOverlayView.setEventsInterceptionEnabled(true);
         gestureOverlayView.setGestureVisible(showGesture);
         gestureOverlayView.addOnGesturePerformedListener(this);
-        setContentView(gestureOverlayView);
+ 
         setProgressBarVisibility(false);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_UNSPECIFIED |
@@ -2072,7 +2072,7 @@ public class ComposeMessageActivity extends Activity
             android.os.Debug.startMethodTracing("compose");
         }
     	addRecentContacts();
-	mMsgListView.setStackFromBottom(true);
+//	mMsgListView.setStackFromBottom(true);
     }
 
     private void showSubjectEditor(boolean show) {

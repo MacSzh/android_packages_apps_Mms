@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout="@layout/recipients_editor" />
-
+        
         <EditText
             android:id="@+id/subject"
             android:layout_width="match_parent"
@@ -70,6 +70,13 @@
         
     </LinearLayout>
 
+    <android.gesture.GestureOverlayView 
+        
+        android:id="@+id/gestures"
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1.0"
+        >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -233,4 +240,5 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+    </android.gesture.GestureOverlayView>
 </LinearLayout>
