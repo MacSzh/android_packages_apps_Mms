@@ -355,9 +355,9 @@
     <string name="pref_summary_sms_split_counter">在分割的消息中加入编号，例如：(1/2)</string>
 
     <!-- Sms templates -->
-    <string name="prefs_templates_settings">短信模板</string>
-    <string name="pref_title_templates_manage">模板</string>
-    <string name="pref_summary_templates_manage">管理您的短信模板</string>
+    <string name="prefs_templates_settings">快捷回复</string>
+    <string name="pref_title_templates_manage">管理快捷回复</string>
+    <string name="pref_summary_templates_manage">插入或修改模板文本并且可以画一个手势与它关联</string>
     <string name="pref_title_templates_show_gesture">手势</string>
     <string name="pref_summary_templates_show_gesture">显示手势轨迹</string>
     <string name="pref_title_template_gestures_sensitivity">手势灵敏度</string>
@@ -370,7 +370,7 @@
     <string name="template_ctx_menu_title">动作</string>
     <string name="template_list_title">模板</string>
     <string name="template_new_title">新建模板</string>
-    <string name="template_insert">插入模板</string>
+    <string name="template_insert">快捷回复</string>
     <string name="template_gesture_draw">在下面的空白处画出您想关联的手势</string>
     <string name="template_not_present_error">您没有定义任何模板</string>
     <string name="template_not_present_error_title">对不起</string>
