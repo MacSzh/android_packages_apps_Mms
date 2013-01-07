@@ -2857,16 +2857,16 @@ public class ComposeMessageActivity extends Activity
                 updateSendButtonState();
                 mSubjectTextEditor.requestFocus();
                 break;
-            case MENU_ADD_ATTACHMENT:
-            	//add by shendu liuchuan
-            	Intent contactIntent = new Intent();
-    			contactIntent.putExtra("from", 100);
-    			ComponentName comp = new ComponentName("com.android.contacts",
-    					"com.android.contacts.activities.ShenDuContactSelectionActivity");
-    			contactIntent.setComponent(comp);
-    			contactIntent.setAction("shendu.intent.action.PICK_ACTION");
-    			startActivityForResult(contactIntent, 0);
-    			break;
+//            case MENU_ADD_ATTACHMENT:
+//            	//add by shendu liuchuan
+//            	Intent contactIntent = new Intent();
+//    			contactIntent.putExtra("from", 100);
+//    			ComponentName comp = new ComponentName("com.android.contacts",
+//    					"com.android.contacts.activities.ShenDuContactSelectionActivity");
+//    			contactIntent.setComponent(comp);
+//    			contactIntent.setAction("shendu.intent.action.PICK_ACTION");
+//    			startActivityForResult(contactIntent, 0);
+//    			break;
             case MENU_DISCARD:
                 mWorkingMessage.discard();
                 finish();
@@ -2935,7 +2935,8 @@ public class ComposeMessageActivity extends Activity
                 break;
             case MENU_SHARE_CONTACT://add by shendu liuchuan
             	Intent intent = new Intent();
-    			intent.putExtra("from", 100);
+            	//Modify by Wang
+    			intent.putExtra("from", 101);
     			ComponentName componentName = new ComponentName("com.android.contacts",
     					"com.android.contacts.activities.ShenDuContactSelectionActivity");
     			intent.setComponent(componentName);
@@ -3226,7 +3227,8 @@ public class ComposeMessageActivity extends Activity
     	// add by shendu liuchuan
 		if (requestCode == 0 && resultCode == 0) {
 			if (data != null) {
-				long[] result = data.getLongArrayExtra("data");
+				//Wang: 
+				String[] result = data.getStringArrayExtra("data");
 				addContacts(result);
 			}
 		}
@@ -3365,7 +3367,7 @@ public class ComposeMessageActivity extends Activity
  		}
  		Cursor phones = getContentResolver().query(Phone.CONTENT_URI, null,
  				Phone.CONTACT_ID + " in (" + inBuffer + ")", null, null);
- 		StringBuffer phoneNumberBuffer = new StringBuffer();
+// 		StringBuffer phoneNumberBuffer = new StringBuffer();
  		if (phones.moveToFirst()) {
  			do {
  				String phoneNumber = phones.getString(phones
@@ -3379,6 +3381,18 @@ public class ComposeMessageActivity extends Activity
  		}
 // 		mRecipientsEditor.setText(phoneNumberBuffer);
  	}
+ 	/**
+ 	 * @author Wang
+ 	 * @date 2013-1-7
+ 	 * */
+ 	private void addContacts(String[] phoneNums) {
+ 		if(phoneNums == null || phoneNums.length == 0){
+ 			return;
+ 		}
+ 		for(String num : phoneNums){
+ 			mRecipientsEditor.submitItemByNum(num);
+ 		}	
+ 	}
  	
  	private void shareContacts(long[] ids) {
  		StringBuffer inBuffer = new StringBuffer();
@@ -3391,7 +3405,7 @@ public class ComposeMessageActivity extends Activity
  		}
  		Cursor phones = getContentResolver().query(Phone.CONTENT_URI, null,
  				Phone.CONTACT_ID + " in (" + inBuffer + ")", null, null);
- 		StringBuffer phoneNumberBuffer = new StringBuffer();
+// 		StringBuffer phoneNumberBuffer = new StringBuffer();
  		if (phones.moveToFirst()) {
  			do {
  				String phoneNumber = phones.getString(phones
