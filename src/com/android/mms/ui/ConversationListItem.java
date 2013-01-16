@@ -121,7 +121,7 @@ public class ConversationListItem extends RelativeLayout implements Contact.Upda
         if (mConversation.getMessageCount() > 1) {
             int before = buf.length();
             buf.append(mContext.getResources().getString(R.string.message_count_format,
-                    mConversation.getMessageCount()));
+                    "("+mConversation.getMessageCount()+")"));
             buf.setSpan(new ForegroundColorSpan(
                     mContext.getResources().getColor(R.color.message_count_color)),
                     before, buf.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
