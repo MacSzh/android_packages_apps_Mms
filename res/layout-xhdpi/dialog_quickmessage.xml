@@ -20,36 +20,100 @@
     android:id="@+id/QuickMessageMainlayout"
     android:layout_width="340dip"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal|bottom"
     android:orientation="vertical" >
+   <!-- message information section incl sender name, badge and timestamp -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/header_bg_mms_widget_holo"
+        android:layout_gravity="left" >
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="7.5dp"
+            android:orientation="vertical"
+            android:paddingLeft="4dp" >
 
+            <TextView
+                android:id="@+id/fromTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="phone"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="2"
+                android:textSize="18sp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#ffc7c7c7"
+                android:textColorLink="#ffc7c7c7" />
+
+            <TextView
+                android:id="@+id/fromPhoneTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="phone"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="2"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textSize="12sp"
+                android:textColor="#ffc7c7c7"
+                android:textColorLink="#ffc7c7c7" />
+        </LinearLayout>
+        <LinearLayout 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:orientation="horizontal"
+            >
+            <ImageButton 
+                android:id="@+id/deleteButton"
+                android:src="@drawable/popo_delete_selector"
+                android:layout_alignParentRight="true"
+                android:background="@color/transparent"
+                android:layout_marginRight="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+             <ImageButton
+                android:id="@+id/button_close"
+                android:src="@drawable/popo_close_selector"
+                android:background="@color/transparent"
+                android:layout_width="wrap_content"
+                android:layout_marginRight="8dp"
+                android:layout_gravity="left"
+                android:text="@string/button_close"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+               
+    </LinearLayout>
     <!-- The Message Pager -->
     <android.support.v4.view.ViewPager
         android:layout_width="match_parent"
         android:layout_height="@dimen/qm_message_height"
-        android:gravity="center"
         android:id="@+id/message_pager" />
 
     <!-- Message counter and Pager indicator -->
-    <ImageView
+<!--     <ImageView
         android:id="@+id/pager_arrow"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:src="@drawable/line_divider_arrow"
         android:layout_gravity="center_horizontal|bottom"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY" /> -->
 
-    <TextView
+ <!--    <TextView
         android:id="@+id/message_counter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:autoLink="all"
         android:gravity="center"
         android:textSize="12sp"
-        android:textColor="?android:attr/textColorTertiary" />
+        android:textColor="?android:attr/textColorTertiary" /> -->
 
     <!-- Buttons -->
-    <LinearLayout
+<!--     <LinearLayout
         android:id="@+id/buttonPanel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -90,5 +154,5 @@
                 android:textSize="14sp"
                 android:layout_height="wrap_content" />
         </LinearLayout>
-    </LinearLayout>
+    </LinearLayout> -->
 </LinearLayout>

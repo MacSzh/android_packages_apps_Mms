@@ -112,7 +112,7 @@ public class QuickMessagePopup extends Activity implements
     LoaderManager.LoaderCallbacks<Cursor> {
     private static final String LOG_TAG = "QuickMessagePopup";
 
-    private boolean DEBUG = false;
+    private boolean DEBUG = true;
 
     // Intent bungle fields
     public static final String SMS_FROM_NAME_EXTRA =
@@ -126,6 +126,8 @@ public class QuickMessagePopup extends Activity implements
     public static final String SMS_ROM_URI = 
     		"com.android.mms.SMS_FROM_URI";
     
+    private ImageButton mDeleteButton;
+    
     
     // Templates support
     private static final int DIALOG_TEMPLATE_SELECT        = 1;
@@ -138,9 +140,9 @@ public class QuickMessagePopup extends Activity implements
 
     // View items
     private ImageView mQmPagerArrow;
-    private TextView mQmMessageCounter;
-    private Button mCloseButton;
-    private Button mViewButton;
+//    private TextView mQmMessageCounter;
+    private ImageButton mCloseButton;
+//    private Button mViewButton;
 
     // General items
     private Drawable mDefaultContactImage;
@@ -177,6 +179,8 @@ public class QuickMessagePopup extends Activity implements
     private View mEmojiView;
     private ContentResolver mContentResolver;
     private BackgroundQueryHandler mBackgroundQueryHandler;
+    private TextView mFromTextView;
+    private TextView mFromPhoneTextView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -237,18 +241,23 @@ public class QuickMessagePopup extends Activity implements
     private void setupViews() {
 
         // Load the main views
-        mQmPagerArrow = (ImageView) findViewById(R.id.pager_arrow);
-        mQmMessageCounter = (TextView) findViewById(R.id.message_counter);
-        mCloseButton = (Button) findViewById(R.id.button_close);
-        mViewButton = (Button) findViewById(R.id.button_view);
-
+//        mQmPagerArrow = (ImageView) findViewById(R.id.pager_arrow);
+//        mQmMessageCounter = (TextView) findViewById(R.id.message_counter);
+        mCloseButton = (ImageButton) findViewById(R.id.button_close);
+//        mViewButton = (Button) findViewById(R.id.button_view);
+        
+        //shutao 2013-2-27
+        mFromTextView = (TextView) findViewById(R.id.fromTextView);
+        mFromPhoneTextView = (TextView) findViewById(R.id.fromPhoneTextView);
+        mDeleteButton = (ImageButton) findViewById(R.id.deleteButton);
+        
         // Set the theme color on the pager arrow
         Resources res = getResources();
-        if (mDarkTheme) {
-            mQmPagerArrow.setBackgroundColor(res.getColor(R.color.quickmessage_body_dark_bg));
-        } else {
-            mQmPagerArrow.setBackgroundColor(res.getColor(R.color.quickmessage_body_light_bg));
-        }
+//        if (mDarkTheme) {
+//            mQmPagerArrow.setBackgroundColor(res.getColor(R.color.quickmessage_body_dark_bg));
+//        } else {
+//            mQmPagerArrow.setBackgroundColor(res.getColor(R.color.quickmessage_body_light_bg));
+//        }
 
         // ViewPager Support
         mPagerAdapter = new MessagePagerAdapter();
@@ -280,33 +289,56 @@ public class QuickMessagePopup extends Activity implements
                 }
             }
         });
+        
+        mDeleteButton.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				 
+				 AlertDialog.Builder builder = new AlertDialog.Builder(QuickMessagePopup.this);
+			     builder.setCancelable(true);
+			     builder.setMessage(R.string.confirm_delete_message);
+			     builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+						
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+					QuickMessage qm = mMessageList.get(mCurrentPage);
+					mPagerAdapter.deleMsg(qm, mCurrentPage);
+				}
+			    });
+			    builder.setNegativeButton(R.string.no, null);
+			    builder.show();
+			}
+		} );
 
         // View button
-        mViewButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                // Override the re-lock if the screen was unlocked
-                if (mScreenUnlocked) {
-                    // Cancel the receiver that will clear the wake locks
-                    ClearAllReceiver.removeCancel(getApplicationContext());
-                    ClearAllReceiver.clearAll(false);
-                    mScreenUnlocked = false;
-                }
-
-                // Trigger the view intent
-                mCurrentQm = mMessageList.get(mCurrentPage);
-                Intent vi = mCurrentQm.getViewIntent();
-                if (vi != null) {
-                    mCurrentQm.saveReplyText();
-                    vi.putExtra("sms_body", mCurrentQm.getReplyText());
-
-                    startActivity(vi);
-                }
-                clearNotification(false);
-                finish();
-            }
-        });
+//        mViewButton.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                // Override the re-lock if the screen was unlocked
+//                if (mScreenUnlocked) {
+//                    // Cancel the receiver that will clear the wake locks
+//                    ClearAllReceiver.removeCancel(getApplicationContext());
+//                    ClearAllReceiver.clearAll(false);
+//                    mScreenUnlocked = false;
+//                }
+//
+//                // Trigger the view intent
+//                mCurrentQm = mMessageList.get(mCurrentPage);
+//                Intent vi = mCurrentQm.getViewIntent();
+//                if (vi != null) {
+//                    mCurrentQm.saveReplyText();
+//                    vi.putExtra("sms_body", mCurrentQm.getReplyText());
+//
+//                    startActivity(vi);
+//                }
+//                clearNotification(false);
+//                finish();
+//            }
+//        });
     }
 
     private void parseIntent(Bundle extras, boolean newMessage) {
@@ -338,7 +370,9 @@ public class QuickMessagePopup extends Activity implements
                         + ". Displaying page #" + (mCurrentPage+1));
 
             // Make sure the counter is accurate
+            mPagerAdapter.notifyDataSetChanged();
             updateMessageCounter();
+            
         }
     }
 
@@ -636,10 +670,13 @@ public class QuickMessagePopup extends Activity implements
     /**
      * Update the page indicator counter to show the currently selected visible page number
      */
-    public void updateMessageCounter() {
-        String separator = mContext.getString(R.string.message_counter_separator);
-        mQmMessageCounter.setText((mCurrentPage + 1) + " " + separator + " " + mMessageList.size());
+    
 
+    public void updateMessageCounter() {
+    	  
+//        mQmMessageCounter.setText((mCurrentPage + 1) + " " + separator + " " + mMessageList.size());
+
+    	
         if (DEBUG)
             Log.d(LOG_TAG, "updateMessageCounter() called, counter text set to " + (mCurrentPage + 1)
                     + " of " + mMessageList.size());
@@ -1054,13 +1091,14 @@ public class QuickMessagePopup extends Activity implements
             ImageButton qmSendButton = (ImageButton) layout.findViewById(R.id.send_button_sms);
             ImageButton qmTemplatesButton = (ImageButton) layout.findViewById(R.id.templates_button);
             TextView qmMessageText = (TextView) layout.findViewById(R.id.messageTextView);
-            TextView qmFromName = (TextView) layout.findViewById(R.id.fromTextView);
+//            TextView qmFromName = (TextView) layout.findViewById(R.id.fromTextView);
             TextView qmTimestamp = (TextView) layout.findViewById(R.id.timestampTextView);
-            QuickContactBadge qmContactBadge = (QuickContactBadge) layout.findViewById(R.id.contactBadge);
-
+//            QuickContactBadge qmContactBadge = (QuickContactBadge) layout.findViewById(R.id.contactBadge);
+            TextView mQmMessageCounter = (TextView) layout.findViewById(R.id.message_counter_l);
             /**shutao 2012-12-12*/
-            ImageButton qmDeleteButton = (ImageButton)layout.findViewById(R.id.deleteButton);
-            
+//            ImageButton qmDeleteButton = (ImageButton)layout.findViewById(R.id.deleteButton);
+            String separator   = mContext.getString(R.string.message_counter_separator);
+            mQmMessageCounter.setText((position + 1) + " " + separator + " " + mMessageList.size());
             // Retrieve the current message
             final QuickMessage qm = mMessageList.get(position);
             if (qm != null) {
@@ -1069,15 +1107,16 @@ public class QuickMessagePopup extends Activity implements
                             + qm.getFromName() + ". Number of pages to create = " + getCount());
 
                 // Set the general fields
-                qmFromName.setText(qm.getFromName());
+//                qmFromName.setText(qm.getFromName());
                 qmTimestamp.setText(MessageUtils.formatTimeStampString(mContext, qm.getTimestamp(), mFullTimestamp));
-                updateContactBadge(qmContactBadge, qm.getFromNumber()[0], false);
+//                updateContactBadge(qmContactBadge, qm.getFromNumber()[0], false);
                 qmMessageText.setText(formatMessage(qm.getMessageBody()));
 
                 if (!mDarkTheme) {
                     // We are using a holo.light background with a holo.dark activity theme
                     // Override the EditText background to use the holo.light theme
-                    qmReplyText.setBackgroundResource(R.drawable.edit_text_holo_light);
+                	//shutao 2013-2-28
+//                    qmReplyText.setBackgroundResource(R.drawable.edit_text_holo_light);
                 }
 
                 // Set the remaining values
@@ -1154,26 +1193,52 @@ public class QuickMessagePopup extends Activity implements
                     }
                 });
                 
-                qmDeleteButton.setOnClickListener(new OnClickListener() {
+                qmMessageText.setOnClickListener(new OnClickListener() {
 					
 					@Override
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
-					        AlertDialog.Builder builder = new AlertDialog.Builder(QuickMessagePopup.this);
-					        builder.setCancelable(true);
-					        builder.setMessage(R.string.confirm_delete_message);
-					        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-								
-								@Override
-								public void onClick(DialogInterface dialog, int which) {
-									// TODO Auto-generated method stub
-									deleMsg(qm, position);
-								}
-							});
-					        builder.setNegativeButton(R.string.no, null);
-					        builder.show();
+						if (mScreenUnlocked) {
+		                    // Cancel the receiver that will clear the wake locks
+		                    ClearAllReceiver.removeCancel(getApplicationContext());
+		                    ClearAllReceiver.clearAll(false);
+		                    mScreenUnlocked = false;
+		                }
+		
+		                // Trigger the view intent
+		                mCurrentQm = mMessageList.get(position);
+		                Intent vi = mCurrentQm.getViewIntent();
+		                if (vi != null) {
+		                    mCurrentQm.saveReplyText();
+		                    vi.putExtra("sms_body", mCurrentQm.getReplyText());
+		
+		                    startActivity(vi);
+		                }
+		                clearNotification(false);
+		                finish();
 					}
 				});
+                
+//                qmDeleteButton.setOnClickListener(new OnClickListener() {
+//					
+//					@Override
+//					public void onClick(View v) {
+//						// TODO Auto-generated method stub
+//					        AlertDialog.Builder builder = new AlertDialog.Builder(QuickMessagePopup.this);
+//					        builder.setCancelable(true);
+//					        builder.setMessage(R.string.confirm_delete_message);
+//					        builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+//								
+//								@Override
+//								public void onClick(DialogInterface dialog, int which) {
+//									// TODO Auto-generated method stub
+//									deleMsg(qm, position);
+//								}
+//							});
+//					        builder.setNegativeButton(R.string.no, null);
+//					        builder.show();
+//					}
+//				});
 
                 // Add the layout to the viewpager
                 ((ViewPager) collection).addView(layout);
@@ -1255,11 +1320,27 @@ public class QuickMessagePopup extends Activity implements
 
         @Override
         public void setPrimaryItem(ViewGroup container, int position, Object object) {
-            LinearLayout view = ((LinearLayout)object);
+        	LinearLayout view = ((LinearLayout)object);
             if (view != mCurrentPrimaryLayout) {
                 mCurrentPrimaryLayout = view;
+                final QuickMessage qm = mMessageList.get(position);
+                mFromTextView.setText(qm.getFromName());
+                if(!isNumeric(qm.getFromName())){
+                	 mFromPhoneTextView.setText(qm.getFromNumberm());
+                }else{
+                	mFromPhoneTextView.setText("");
+                }
+               
             }
         }
+        
+        public boolean isNumeric(String str){
+
+            Pattern pattern = Pattern.compile("[0-9]*");
+
+            return pattern.matcher(str).matches();   
+
+         }
 
         @Override
         public void onPageSelected(int position) {

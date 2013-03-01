@@ -246,12 +246,15 @@ public class MmsWidgetService extends RemoteViewsService {
                 RemoteViews remoteViews = new RemoteViews(
                         mContext.getPackageName(), R.layout.widget_conversation);
 
+                //shutao 2013-2-26
                 if (conv.hasUnreadMessages()) {
                     remoteViews.setViewVisibility(R.id.widget_unread_background, View.VISIBLE);
                     remoteViews.setViewVisibility(R.id.widget_read_background, View.GONE);
+                    remoteViews.setViewVisibility(R.id.avatarnum, View.VISIBLE);
                 } else {
                     remoteViews.setViewVisibility(R.id.widget_unread_background, View.GONE);
                     remoteViews.setViewVisibility(R.id.widget_read_background, View.VISIBLE);
+                    remoteViews.setViewVisibility(R.id.avatarnum, View.GONE);
                 }
                 boolean hasAttachment = conv.hasAttachment();
                 remoteViews.setViewVisibility(R.id.attachment, hasAttachment ? View.VISIBLE :
@@ -277,12 +280,15 @@ public class MmsWidgetService extends RemoteViewsService {
                             android.R.style.TextAppearance_Small, color), before,
                             from.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
                     from.setSpan(new ForegroundColorSpan(
-                            mContext.getResources().getColor(R.drawable.text_color_red)),
+                            mContext.getResources().getColor(R.color.shendu_conversation_text_bule)),
                             before, from.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
                 }
 
                 // Unread messages are shown in bold
                 if (conv.hasUnreadMessages()) {
+                	//shutao 2013-2-26
+                	remoteViews.setTextViewText(R.id.avatarnum, 
+                			getUnReadUnm(conv.getThreadId()).getCount()+"");        	
                     from.setSpan(ConversationListItem.STYLE_BOLD, 0, from.length(),
                             Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
                 }
@@ -307,6 +313,14 @@ public class MmsWidgetService extends RemoteViewsService {
                 return remoteViews;
             }
         }
+        
+        //add by shendu liuchuan
+    	private Cursor getUnReadUnm(long threadId) {
+    		Cursor c = mContext.getContentResolver().query(
+    				Uri.parse("content://sms"), null, "thread_id=? and read=?",
+    				new String[] { threadId + "", "0" }, null);
+    		return c;
+    	}
 
         /**
          * @return the "View more conversations" view. When the user taps this item, they're

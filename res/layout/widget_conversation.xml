@@ -21,7 +21,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_conversation"
     android:layout_width="match_parent"
-    android:layout_height="48dp">
+    android:layout_height="60dp">
     <!--
         Remote view doesn't allow changing background so we have to work around
         by having 2 image views here.
@@ -95,5 +95,16 @@
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@id/attachment"
             android:ellipsize="end" />
+        
+      <TextView
+        android:id="@+id/avatarnum"
+        android:background="@drawable/unread_mms_bg"
+        android:layout_gravity="top|right"
+        android:gravity="center"
+        android:visibility="gone"
+        android:textColor="#ffffff"
+        android:layout_toRightOf="@id/from"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     </RelativeLayout>
 </FrameLayout>

@@ -37,6 +37,7 @@ import android.widget.CursorAdapter;
 public class ConversationListAdapter extends CursorAdapter implements AbsListView.RecyclerListener {
     private static final String TAG = "ConversationListAdapter";
     private static final boolean LOCAL_LOGV = false;
+    private boolean mIsVisibility = false;
 
     private final LayoutInflater mFactory;
     private OnContentChangedListener mOnContentChangedListener;
@@ -54,6 +55,11 @@ public class ConversationListAdapter extends CursorAdapter implements AbsListVie
         }
 
         ConversationListItem headerView = (ConversationListItem) view;
+        if(mIsVisibility){
+        	headerView.setCheckBoxVisibility(View.VISIBLE);
+        }else{
+        	headerView.setCheckBoxVisibility(View.GONE);
+         }
         Conversation conv = Conversation.from(context, cursor);
         headerView.bind(context, conv);
     }
@@ -61,6 +67,10 @@ public class ConversationListAdapter extends CursorAdapter implements AbsListVie
     public void onMovedToScrapHeap(View view) {
         ConversationListItem headerView = (ConversationListItem)view;
         headerView.unbind();
+    }
+    
+    public void setVBox(boolean isVisibility){
+    	this.mIsVisibility = isVisibility;
     }
 
     @Override

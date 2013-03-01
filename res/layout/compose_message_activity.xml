@@ -160,6 +160,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/sms_bg"
+                android:gravity="center_vertical"
                 android:orientation="horizontal" >
 
                 <ImageView
@@ -174,15 +175,16 @@
                 <EditText
                     android:id="@+id/embedded_text_editor"
                     android:layout_width="0dip"
+                    android:background="@drawable/embedded_text_editor_selector"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginLeft="8dip"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="5dip"
                     android:layout_weight="1.0"
                     android:autoText="true"
                     android:capitalize="sentences"
                     android:hint="@string/type_to_compose_text_enter_to_send"
                     android:imeOptions="actionSend|flagNoEnterAction"
-                    android:maxLength="2000"
+                    android:maxLength="20000"
                     android:maxLines="3"
                     android:minHeight="@dimen/input_text_height"
                     android:nextFocusRight="@+id/send_button"
@@ -193,14 +195,14 @@
                     android:id="@+id/button_with_counter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
+                    android:gravity="center_vertical"
                     android:orientation="vertical" >
 
                     <TextView
                         android:id="@+id/text_counter"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_horizontal|bottom"
+                        android:gravity="center_vertical"
                         android:paddingBottom="5dip"
                         android:paddingLeft="3dip"
                         android:paddingRight="3dip"
@@ -229,8 +231,8 @@
                         android:id="@+id/send_button_sms"
                         style="?android:attr/borderlessButtonStyle"
                         android:layout_width="wrap_content"
-                        android:layout_height="0dip"
-                        android:layout_marginLeft="4dip"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="0dip"
                         android:layout_weight="1.0"
                         android:contentDescription="@string/send"
                         android:drawablePadding="0dip"

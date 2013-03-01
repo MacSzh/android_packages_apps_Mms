@@ -14,8 +14,8 @@ All Rights Reserved. -->
     <dimen name="mms_inline_attachment_size">178dip</dimen>
 
     <dimen name="widget_margin_top">0dip</dimen>
-    <dimen name="widget_margin_left">0dip</dimen>
-    <dimen name="widget_margin_right">0dip</dimen>
+    <dimen name="widget_margin_left">5dip</dimen>
+    <dimen name="widget_margin_right">5dip</dimen>
     <dimen name="widget_margin_bottom">0dip</dimen>
 
     <!-- QuickMessage -->

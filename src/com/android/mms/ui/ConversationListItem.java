@@ -42,6 +42,7 @@ import android.text.style.TextAppearanceSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.Checkable;
 import android.widget.QuickContactBadge;
 import android.widget.RelativeLayout;
@@ -63,6 +64,8 @@ public class ConversationListItem extends RelativeLayout implements Contact.Upda
     private Context mContext;
     private QuickContactBadge mAvatarView;
 
+    //shutao 2013-2-22
+    private CheckBox mAvatarCheckBox;
     static private Drawable sDefaultContactImage;
 
     // For posting UI update Runnables from other threads:
@@ -98,6 +101,8 @@ public class ConversationListItem extends RelativeLayout implements Contact.Upda
         mAttachmentView = findViewById(R.id.attachment);
         mErrorIndicator = findViewById(R.id.error);
         mAvatarView = (QuickContactBadge) findViewById(R.id.avatar);
+        //shutao 2013-2-22
+        mAvatarCheckBox = (CheckBox) findViewById(R.id.avatar_box);
     }
 
     public Conversation getConversation() {
@@ -113,36 +118,43 @@ public class ConversationListItem extends RelativeLayout implements Contact.Upda
     }
 
     private CharSequence formatMessage() {
-        final int color = android.R.styleable.Theme_textColorSecondary;
+//        final int color = android.R.styleable.Theme_textColorSecondary;
+    	 final int color = R.color.shendu_conversation_text_bule;
         String from = mConversation.getRecipients().formatNames(", ");
 
         SpannableStringBuilder buf = new SpannableStringBuilder(from);
-
-        if (mConversation.getMessageCount() > 1) {
-            int before = buf.length();
-            buf.append(mContext.getResources().getString(R.string.message_count_format,
-                    "("+mConversation.getMessageCount()+")"));
-            buf.setSpan(new ForegroundColorSpan(
-                    mContext.getResources().getColor(R.color.message_count_color)),
-                    before, buf.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
-        }
+//shutao 2013-2-19
+//        if (mConversation.getMessageCount() > 1) {
+//            int before = buf.length();
+//            buf.append(mContext.getResources().getString(R.string.message_count_format,
+//                    "("+mConversation.getMessageCount()+")"));
+//            buf.setSpan(new ForegroundColorSpan(
+//                    mContext.getResources().getColor(R.color.message_count_color)),
+//                    before, buf.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+//        }
+        try{
         if (mConversation.hasDraft()) {
             buf.append(mContext.getResources().getString(R.string.draft_separator));
             int before = buf.length();
             int size;
             buf.append(mContext.getResources().getString(R.string.has_draft));
-            size = android.R.style.TextAppearance_Small;
-            buf.setSpan(new TextAppearanceSpan(mContext, size, color), before,
-                    buf.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+//            size = android.R.style.TextAppearance_Small;
+//            buf.setSpan(new TextAppearanceSpan(mContext, size, color), before,
+//                    buf.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
             buf.setSpan(new ForegroundColorSpan(
-                    mContext.getResources().getColor(R.drawable.text_color_red)),
+                    mContext.getResources().getColor(R.color.shendu_conversation_text_bule)),
                     before, buf.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
         }
-
         // Unread messages are shown in bold
         if (mConversation.hasUnreadMessages()) {
             buf.setSpan(STYLE_BOLD, 0, buf.length(),
                     Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+            buf.setSpan(new ForegroundColorSpan(
+                    mContext.getResources().getColor(R.color.shendu_conversation_text_bule)),
+                    0, buf.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        }
+        }catch(Exception e){
+        	e.printStackTrace();
         }
         return buf;
     }
@@ -160,7 +172,8 @@ public class ConversationListItem extends RelativeLayout implements Contact.Upda
             }
         } else {
             // TODO get a multiple recipients asset (or do something else)
-            avatarDrawable = sDefaultContactImage;
+//            avatarDrawable = sDefaultContactImage;
+        	 avatarDrawable = mContext.getResources().getDrawable(R.drawable.ic_contact_group);
             mAvatarView.assignContactUri(null);
         }
         mAvatarView.setImageDrawable(avatarDrawable);
@@ -214,7 +227,7 @@ public class ConversationListItem extends RelativeLayout implements Contact.Upda
         // Date
         mDateView.setText(MessageUtils.formatTimeStampString(context, conversation.getDate()));
 
-        // From.
+        // From. shutao 2013-2-19
         mFromView.setText(formatMessage());
 
         // Register for updates in changes of any of the contacts in this conversation.
@@ -274,9 +287,14 @@ public class ConversationListItem extends RelativeLayout implements Contact.Upda
         // Unregister contact update callbacks.
         Contact.removeListener(this);
     }
+    
+    public void setCheckBoxVisibility(int visibility){
+    	mAvatarCheckBox.setVisibility(visibility);
+    }
 
     public void setChecked(boolean checked) {
         mConversation.setIsChecked(checked);
+        mAvatarCheckBox.setChecked(checked);
         updateBackground();
     }
 
@@ -286,5 +304,6 @@ public class ConversationListItem extends RelativeLayout implements Contact.Upda
 
     public void toggle() {
         mConversation.setIsChecked(!mConversation.isChecked());
+        mAvatarCheckBox.setChecked(!mConversation.isChecked());
     }
 }

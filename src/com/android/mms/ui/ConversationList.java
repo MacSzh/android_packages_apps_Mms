@@ -51,6 +51,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
@@ -76,6 +77,7 @@ import android.view.View.OnCreateContextMenuListener;
 import android.view.View.OnKeyListener;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -107,7 +109,7 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
     private SharedPreferences mPrefs;
     private Handler mHandler;
     private boolean mNeedToMarkAsSeen;
-    private TextView mUnreadConvCount;
+    private ImageView mUnreadConvCount;
     private MenuItem mSearchItem;
     private SearchView mSearchView;
 
@@ -116,7 +118,7 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setupActionBar();
         setContentView(R.layout.conversation_list_screen);
 
         mQueryHandler = new ThreadListQueryHandler(getContentResolver());
@@ -132,9 +134,11 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
 
         initListAdapter();
 
-        setupActionBar();
-
         setTitle(R.string.app_label);
+        int titleId = Resources.getSystem().getIdentifier(  
+                "action_bar_title", "id", "android");  
+        TextView shendu_title = (TextView) findViewById(titleId);
+        shendu_title.setTextColor(getResources().getColor(R.color.shendu_conversation_title_text_color));
 
         mHandler = new Handler();
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -146,17 +150,28 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
     }
 
     private void setupActionBar() {
+
+        //shutao 2013-2-18
         ActionBar actionBar = getActionBar();
+        actionBar.setDisplayShowHomeEnabled(false);
         ViewGroup v = (ViewGroup)LayoutInflater.from(this)
-            .inflate(R.layout.conversation_list_actionbar, null);
+            .inflate(R.layout.conversation_list_button, null);
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM,
                 ActionBar.DISPLAY_SHOW_CUSTOM);
         actionBar.setCustomView(v,
                 new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT,
                         ActionBar.LayoutParams.WRAP_CONTENT,
                         Gravity.CENTER_VERTICAL | Gravity.RIGHT));
-        actionBar.setSplitBackgroundDrawable(getResources().getDrawable(R.drawable.sms_bot_bg));
-        mUnreadConvCount = (TextView)v.findViewById(R.id.unread_conv_count);
+//        actionBar.setSplitBackgroundDrawable(getResources().getDrawable(R.drawable.sms_bot_bg));
+        mUnreadConvCount = (ImageView)v.findViewById(R.id.conversation_imageView);
+        mUnreadConvCount.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				createNewMessage();
+			}
+		});
     }
 
     private final ConversationListAdapter.OnContentChangedListener mContentChangedListener =
@@ -345,18 +360,18 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.conversation_list_menu, menu);
 
-        mSearchItem = menu.findItem(R.id.search);
-        mSearchView = (SearchView) mSearchItem.getActionView();
-
-        mSearchView.setOnQueryTextListener(mQueryTextListener);
-        mSearchView.setQueryHint(getString(R.string.search_hint));
-        mSearchView.setIconifiedByDefault(true);
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-
-        if (searchManager != null) {
-            SearchableInfo info = searchManager.getSearchableInfo(this.getComponentName());
-            mSearchView.setSearchableInfo(info);
-        }
+//        mSearchItem = menu.findItem(R.id.search);
+//        mSearchView = (SearchView) mSearchItem.getActionView();
+//
+//        mSearchView.setOnQueryTextListener(mQueryTextListener);
+//        mSearchView.setQueryHint(getString(R.string.search_hint));
+//        mSearchView.setIconifiedByDefault(true);
+//        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+//
+//        if (searchManager != null) {
+//            SearchableInfo info = searchManager.getSearchableInfo(this.getComponentName());
+//            mSearchView.setSearchableInfo(info);
+//        }
 
         MenuItem cellBroadcastItem = menu.findItem(R.id.action_cell_broadcasts);
         if (cellBroadcastItem != null) {
@@ -408,9 +423,9 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.action_compose_new:
+          /*  case R.id.action_compose_new:
                 createNewMessage();
-                break;
+                break;*/
             case R.id.action_delete_all:
                 // The invalid threadId of -1 means all threads here.
                 confirmDeleteThread(-1L, mQueryHandler);
@@ -760,7 +775,8 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
                     count = cursor.getCount();
                     cursor.close();
                 }
-                mUnreadConvCount.setText(count > 0 ? Integer.toString(count) : null);
+                //shutao 2013-2-18
+//                mUnreadConvCount.setText(count > 0 ? Integer.toString(count) : null);
                 break;
 
             case HAVE_LOCKED_MESSAGES_TOKEN:
@@ -833,7 +849,10 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            MenuInflater inflater = getMenuInflater();
+        	ConversationListAdapter adapter = (ConversationListAdapter)getListView().getAdapter();
+        	adapter.setVBox(true);
+        	adapter.notifyDataSetChanged();
+        	MenuInflater inflater = getMenuInflater();
             mSelectedThreadIds = new HashSet<Long>();
             inflater.inflate(R.menu.conversation_multi_select_menu, menu);
             if (mMultiSelectActionBarView == null) {
@@ -844,11 +863,12 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
                     (TextView)mMultiSelectActionBarView.findViewById(R.id.selected_conv_count);
             }
             mode.setCustomView(mMultiSelectActionBarView);
-            ((TextView)mMultiSelectActionBarView.findViewById(R.id.title))
-                .setText(R.string.select_conversations);
+            //shutao 2013-2-20
+//            ((TextView)mMultiSelectActionBarView.findViewById(R.id.title))
+//                .setText(R.string.select_conversations);
             return true;
         }
-
+        
         @Override
         public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
             if (mMultiSelectActionBarView == null) {
@@ -880,6 +900,7 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             ConversationListAdapter adapter = (ConversationListAdapter)getListView().getAdapter();
+            adapter.setVBox(false);
             adapter.uncheckAll();
             mSelectedThreadIds = null;
         }
@@ -889,7 +910,7 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
                 int position, long id, boolean checked) {
             ListView listView = getListView();
             final int checkedCount = listView.getCheckedItemCount();
-            mSelectedConvCount.setText(Integer.toString(checkedCount));
+            mSelectedConvCount.setText(formatString(checkedCount));
 
             Cursor cursor  = (Cursor)listView.getItemAtPosition(position);
             Conversation conv = Conversation.from(ConversationList.this, cursor);
@@ -901,6 +922,12 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
             } else {
                 mSelectedThreadIds.remove(threadId);
             }
+        }
+        
+        /** Override MultiChoiceModeListener end **/
+
+        private String formatString(int count) {
+            return String.format(getString(R.string.select_conversations), count);
         }
 
     }

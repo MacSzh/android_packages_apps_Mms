@@ -202,7 +202,7 @@
     <string name="confirm_delete_SIM_message" msgid="8535128079045452425">"系统会删除 SIM 卡上的这条短信。"</string>
     <string name="delete_unlocked" msgid="7545321606698162261">"删除锁定短信"</string>
     <string name="delete" msgid="1409973060081564612">"删除"</string>
-    <string name="select_conversations" msgid="7816517565640002844">"选择会话"</string>
+    <string name="select_conversations" msgid="7816517565640002844">"选中%s个"</string>
     <string name="no_conversations" msgid="6773767655149258445">"无会话。"</string>
     <string name="loading_conversations" msgid="5510430408235967094">"正在加载会话。"</string>
     <string name="cannot_get_details" msgid="850292987983026806">"无法获取详细信息。"</string>
@@ -424,7 +424,7 @@
     <string name="pref_close_all_summary">“关闭”按钮将关闭所有的消息</string>
     <string name="pref_dark_theme_title">使用暗色主题</string>
     <string name="pref_dark_theme_summary">如果未被选中，默认的\'淡色\'主题将会被使用</string>
-    <string name="message_counter_separator">之</string>
+    <string name="message_counter_separator">/</string>
 
     <!-- QM Dialog box buttons -->
     <string name="button_close">关闭</string>

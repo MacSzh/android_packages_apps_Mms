@@ -21,89 +21,35 @@
     android:layout_gravity="center_horizontal|bottom"
     android:orientation="vertical" >
 
-    <!-- message information section incl sender name, badge and timestamp -->
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="4dip"
-        android:layout_gravity="left" >
-
-        <android.widget.QuickContactBadge
-            android:id="@+id/contactBadge"
-            android:layout_width="40dip"
-            android:layout_height="40dip"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/shendu_popo_quickcontactbadge_margin"
-            android:layout_marginLeft="@dimen/shendu_popo_quickcontactbadge_margin"
-            android:layout_marginTop="@dimen/shendu_popo_quickcontactbadge_margin"
-            android:background="@drawable/ic_contact_picture_1"
-            android:clickable="false"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_contact_picture_1" />
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="4dp"
-            android:orientation="vertical"
-            android:paddingLeft="4dp" >
-
-            <TextView
-                android:id="@+id/fromTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:autoLink="phone"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:maxLines="2"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="?android:attr/textColorPrimary"
-                android:textColorLink="?android:attr/textColorPrimary" />
-
-            <TextView
+    <!-- Message body -->
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:minHeight="74dp"
+        android:orientation="vertical"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:background="@drawable/bg_widget_holo"
+        >
+             
+             <TextView
                 android:id="@+id/timestampTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="12sp"
-                android:textColor="?android:attr/textColorTertiary" />
-        </LinearLayout>
-        <RelativeLayout 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            >
-            <ImageButton 
-                android:id="@+id/deleteButton"
-                android:src="@drawable/popo_delete_selector"
-                android:layout_alignParentRight="true"
-                android:background="@color/transparent"
-                android:layout_marginRight="8dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </RelativeLayout>
-               
-    </LinearLayout>
-
-    <!-- Blue divider line below sender info -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dip"
-        android:background="@android:color/holo_blue_light"
-        android:paddingBottom="4dp"
-        android:paddingTop="4dp" />
-
-    <!-- Message body -->
+                android:layout_marginTop="3dip"
+                android:textSize="13sp"
+                android:layout_marginLeft="10dip"
+                android:textColor="#ff808080" />
+             
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="center"
         android:layout_weight="1"
+
         android:fillViewport="true"
         android:minHeight="72dp"
         android:paddingTop="4dp"
-        android:background="@color/quickmessage_body_light_bg"
         android:paddingBottom="4dp" >
 
         <TextView
@@ -112,7 +58,7 @@
             android:layout_height="wrap_content"
             android:minHeight="72dp"
             android:autoLink="all"
-            android:gravity="center"
+            android:gravity="left"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -120,17 +66,28 @@
             android:textColor="@color/shendu_name_popo_text_color"
             android:textColorLink="@color/shendu_name_popo_text_color" />
     </ScrollView>
-
+    
+       <TextView
+        android:id="@+id/message_counter_l"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autoLink="all"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textColor="?android:attr/textColorTertiary" />
+            
+</LinearLayout>
     <!-- 'Tap to reply' editor, character counter and send button -->
     <LinearLayout
         android:id="@+id/bottom_panel"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/quickmessage_body_light_bg"
-        android:paddingTop="4dp"
-        android:paddingLeft="6dp"
-        android:paddingBottom="2dp" >
+        android:background="@drawable/bg_widget_bottom_holo"
+        android:paddingTop="5dp"
+        android:paddingLeft="10dp"
+        android:paddingBottom="8dp" >
 
         <ImageButton
             android:id="@+id/templates_button"
@@ -140,6 +97,7 @@
             android:layout_width="40dip"
             android:layout_height="40dip"
             android:layout_marginBottom="2dip"
+            android:visibility="gone"
             android:layout_gravity="bottom"
             android:contentDescription="@string/button_templates"
             android:nextFocusRight="@+id/embedded_text_editor" />
@@ -147,6 +105,7 @@
         <EditText
             android:id="@+id/embedded_text_editor"
             android:layout_width="0dip"
+            android:background="@drawable/embedded_text_editor_selector"
             android:layout_gravity="bottom"
             android:layout_height="wrap_content"
             android:layout_weight="1.0"

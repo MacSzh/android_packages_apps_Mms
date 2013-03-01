@@ -1916,8 +1916,10 @@ public class ComposeMessageActivity extends Activity
             }
         }
         mDebugRecipients = list.serialize();
-
+       
+        
         ActionBar actionBar = getActionBar();
+        actionBar.setIcon(getResources().getDrawable(R.drawable.ic_contact_picture_1));
         if (mMsgListAdapter.getCount() > 0) {
 			actionBar.setDisplayHomeAsUpEnabled(false);
 			Contact contact = Contact.get(list.get(0).getNumber(), false);
@@ -1926,8 +1928,17 @@ public class ComposeMessageActivity extends Activity
 					.getDrawable(R.drawable.ic_contact_picture_1));
 			actionBar.setIcon(avatarDrawable);
 		}
+
         actionBar.setTitle(title);
+        int titleId = Resources.getSystem().getIdentifier(  
+                "action_bar_title", "id", "android"); 
+        TextView shendu_title = (TextView) findViewById(titleId);
+        shendu_title.setTextColor(getResources().getColor(R.color.shendu_conversation_title_text_color));
+        System.out.println("subTitle"+subTitle);
         actionBar.setSubtitle(subTitle);
+        TextView shendu_subtitle = (TextView) findViewById(Resources.getSystem().getIdentifier(  
+                "action_bar_subtitle", "id", "android"));
+        shendu_subtitle.setTextColor(getResources().getColor(R.color.shendu_conversation_title_text_color));
     }
 
     // Get the recipients editor ready to be displayed onscreen.

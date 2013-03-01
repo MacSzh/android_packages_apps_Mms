@@ -18,16 +18,16 @@
  */
 -->
 
-<com.android.mms.ui.ConversationListItem xmlns:android="http://schemas.android.com/apk/res/android"
+<com.android.mms.ui.ConversationListItem 
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="?android:attr/listPreferredItemHeight"
-    android:paddingRight="10dip" >
+    android:layout_height="?android:attr/listPreferredItemHeight" >
 
 <FrameLayout
         android:id="@+id/avatarframe"
         android:layout_width="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="12dp"
+        android:layout_marginLeft="3dp"
         android:layout_height="wrap_content" >
         <android.widget.QuickContactBadge
             android:id="@+id/avatar"
@@ -46,6 +46,8 @@
         android:layout_marginTop="6dip"
         android:layout_marginRight="5dip"
         android:layout_marginLeft="10dip"
+        android:textSize="19sp"
+        android:textColor="#ff343537"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@id/avatarframe"
         android:layout_alignWithParentIfMissing="true"
@@ -60,6 +62,8 @@
         android:layout_width="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:singleLine="true"
+        android:textColor="#ff686a6e"
+        android:textSize="14sp"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true" />
 
@@ -92,6 +96,8 @@
         android:layout_toRightOf="@id/avatarframe"
         android:layout_alignWithParentIfMissing="true"
         android:layout_toLeftOf="@id/date"
+        android:textColor="#ff686a6e"
+        android:textSize="14sp"
         android:ellipsize="end" />
     
      <TextView
@@ -101,9 +107,17 @@
         android:gravity="center"
         android:visibility="gone"
         android:textColor="#ffffff"
-        android:layout_marginRight="14dip"
-        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/from"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+     <CheckBox 
+         android:id="@+id/avatar_box"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_alignParentRight="true"
+         android:visibility="gone"
+         android:focusable="false"
+         android:clickable="false"
+       />
 
 </com.android.mms.ui.ConversationListItem>
