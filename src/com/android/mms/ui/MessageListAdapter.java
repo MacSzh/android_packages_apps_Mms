@@ -37,6 +37,8 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.CursorAdapter;
 import android.widget.ListView;
+import android.widget.LinearLayout.LayoutParams;
+
 import com.android.mms.R;
 import com.google.android.mms.MmsException;
 
@@ -223,7 +225,10 @@ public class MessageListAdapter extends CursorAdapter {
                         parent, false);
         if (boxType == INCOMING_ITEM_TYPE_MMS || boxType == OUTGOING_ITEM_TYPE_MMS) {
             // We've got an mms item, pre-inflate the mms portion of the view
+        	
+        	
             view.findViewById(R.id.mms_layout_view_stub).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.message_context).setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
         }
         return view;
     }

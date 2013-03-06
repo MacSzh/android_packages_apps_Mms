@@ -1920,8 +1920,8 @@ public class ComposeMessageActivity extends Activity
         
         ActionBar actionBar = getActionBar();
         actionBar.setIcon(getResources().getDrawable(R.drawable.ic_contact_picture_1));
+        actionBar.setDisplayHomeAsUpEnabled(false);
         if (mMsgListAdapter.getCount() > 0) {
-			actionBar.setDisplayHomeAsUpEnabled(false);
 			Contact contact = Contact.get(list.get(0).getNumber(), false);
           //Wang: 2012-11-27
 			Drawable avatarDrawable = contact.getAvatar(this, getResources()

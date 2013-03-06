@@ -31,7 +31,6 @@
         android:layout_height="wrap_content" >
         <android.widget.QuickContactBadge
             android:id="@+id/avatar"
-            style="?android:attr/quickContactBadgeStyleWindowLarge"
             android:layout_gravity="center"
             android:layout_width="50dp"
             android:layout_height="50dp"

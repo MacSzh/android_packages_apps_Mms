@@ -32,6 +32,7 @@
         android:layout_gravity="center"
         android:maxWidth="@dimen/mms_inline_attachment_size"
         android:maxHeight="@dimen/mms_inline_attachment_size"
+        android:minWidth="100dip"
         android:adjustViewBounds="true"
         android:background="@drawable/attachment_selector"
         android:visibility="visible" />

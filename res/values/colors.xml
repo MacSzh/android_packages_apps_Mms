@@ -68,9 +68,9 @@
     
     <color name="shendu_name_popo_text_color">#4b4b4d</color>
     
-     <!--Wang 2012-11-1 name avatar ui -->
-     <color name="shendu_name_avatar_background">#8cd9ec</color>
-     <color name="shendu_name_avatar_text_color">#FFFFFF</color>
+     <!--Wang 2012-11-1 name avatar ui 5daee3-->
+     <color name="shendu_name_avatar_background">#ff5daee3</color>
+     <color name="shendu_name_avatar_text_color">#000000</color>
      
      <!-- shutao 2013-2-19 shendu title color -->
      <color name="shendu_conversation_title_text_color">#ffc7c7c7</color>

@@ -95,7 +95,6 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
     public static final int DELETE_CONVERSATION_TOKEN      = 1801;
     public static final int HAVE_LOCKED_MESSAGES_TOKEN     = 1802;
     private static final int DELETE_OBSOLETE_THREADS_TOKEN = 1803;
-
     // IDs of the context menu items for the list of conversations.
     public static final int MENU_DELETE               = 0;
     public static final int MENU_VIEW                 = 1;
@@ -112,6 +111,8 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
     private ImageView mUnreadConvCount;
     private MenuItem mSearchItem;
     private SearchView mSearchView;
+    
+    private TextView mShendu_title;
 
     static private final String CHECKED_MESSAGE_LIMITS = "checked_message_limits";
 
@@ -137,8 +138,8 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
         setTitle(R.string.app_label);
         int titleId = Resources.getSystem().getIdentifier(  
                 "action_bar_title", "id", "android");  
-        TextView shendu_title = (TextView) findViewById(titleId);
-        shendu_title.setTextColor(getResources().getColor(R.color.shendu_conversation_title_text_color));
+        mShendu_title = (TextView) findViewById(titleId);
+        mShendu_title.setTextColor(getResources().getColor(R.color.shendu_conversation_title_text_color));
 
         mHandler = new Handler();
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -262,12 +263,9 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
     @Override
     protected void onStart() {
         super.onStart();
-
         MessagingNotification.cancelNotification(getApplicationContext(),
                 SmsRejectedReceiver.SMS_REJECTED_NOTIFICATION_ID);
-
         DraftCache.getInstance().addOnDraftChangedListener(this);
-
         mNeedToMarkAsSeen = true;
         startAsyncQuery();
 
@@ -298,6 +296,7 @@ public class ConversationList extends ListActivity implements DraftCache.OnDraft
     @Override
     protected void onResume() {
         super.onResume();
+        mShendu_title.setTextColor(getResources().getColor(R.color.shendu_conversation_title_text_color));
         mIsRunning = true;
     }
 

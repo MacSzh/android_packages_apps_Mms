@@ -20,14 +20,14 @@
 
 <com.android.mms.ui.MessageListItem xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/msg_list_item_recv"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:orientation="horizontal" >
 
     <LinearLayout
         android:id="@+id/mms_layout_view_parent"
-         android:layout_marginTop="10dip"
-            android:layout_marginRight="10dp"
+        android:layout_marginTop="10dip"
+        android:layout_marginRight="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -53,12 +53,14 @@
                 android:layout_alignParentLeft="true"
                 android:gravity="right"
                 android:minHeight="@dimen/avatar_width_height"
+                android:minWidth="@dimen/avatar_width_height"
                 android:orientation="vertical"
                 android:paddingLeft="50dp" >
                 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:id="@+id/message_context"
                     android:gravity="center"
                     android:background="@drawable/recv_messageitem_selector"
                     android:orientation="vertical" >
@@ -78,7 +80,8 @@
                         <ViewStub
                         android:id="@+id/mms_layout_view_stub"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="1dip"
                         android:layout="@layout/mms_layout_view" />
  </LinearLayout>
  

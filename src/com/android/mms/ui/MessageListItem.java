@@ -103,6 +103,7 @@ public class MessageListItem extends LinearLayout implements
     private ImageView mDetailsIndicator;
     private ImageButton mSlideShowButton;
     private TextView mBodyTextView;
+    private LinearLayout mMessageContext;
     private Button mDownloadButton;
     private TextView mDownloadingLabel;
     private Handler mHandler;
@@ -144,7 +145,7 @@ public class MessageListItem extends LinearLayout implements
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-
+        mMessageContext = (LinearLayout) findViewById(R.id.message_context);
         mBodyTextView = (TextView) findViewById(R.id.text_view);
         mDateView = (TextView) findViewById(R.id.date_view);
         mLockedIndicator = (ImageView) findViewById(R.id.locked_indicator);
@@ -464,6 +465,7 @@ public class MessageListItem extends LinearLayout implements
                 //inflate the mms view_stub
                 View mmsStub = findViewById(R.id.mms_layout_view_stub);
                 mmsStub.setVisibility(View.VISIBLE);
+                mMessageContext.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
                 mMmsView = findViewById(R.id.mms_view);
             }
         }

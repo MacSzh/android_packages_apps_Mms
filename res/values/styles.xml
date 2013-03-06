@@ -25,9 +25,14 @@
     </style>
 
     <style name="MmsHoloTheme" parent="@android:style/Theme.Holo.Light">
-        <item name="android:actionBarStyle">@*android:style/Widget.Holo.Light.ActionBar</item>
+        <item name="android:actionBarStyle">@style/MmsActionBarHoloTheme</item>
         <item name="android:actionModeCloseDrawable">@drawable/ic_ab_back_holo</item>
-
+        <item name="android:windowBackground">@drawable/comversation_bg</item>
+    </style>
+    
+    <style name="MmsActionBarHoloTheme" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@drawable/ab_transparent_light_holo</item>
+        <item name="android:textColor">@color/shendu_conversation_title_text_color</item>
     </style>
     
     <style name="WidgetTitle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">

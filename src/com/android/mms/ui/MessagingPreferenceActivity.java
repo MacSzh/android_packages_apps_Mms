@@ -29,6 +29,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
@@ -42,6 +43,7 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.provider.SearchRecentSuggestions;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.android.mms.templates.TemplatesListActivity;
 import com.android.mms.util.Recycler;
@@ -111,6 +113,8 @@ public class MessagingPreferenceActivity extends PreferenceActivity
     private CheckBoxPreference mEnableQmLockscreenPref;
     private CheckBoxPreference mEnableQmCloseAllPref;
     private CheckBoxPreference mEnableQmDarkThemePref;
+    
+    private TextView mShendu_title;
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -118,8 +122,15 @@ public class MessagingPreferenceActivity extends PreferenceActivity
 
         loadPrefs();
 
+        setIsShenDu(true,true);
         ActionBar actionBar = getActionBar();
+        int titleId = Resources.getSystem().getIdentifier(  
+                "action_bar_title", "id", "android");  
+        mShendu_title = (TextView) findViewById(titleId);
+        mShendu_title.setTextColor(getResources().getColor(R.color.shendu_conversation_title_text_color));
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(false);
+        
     }
 
     @Override
