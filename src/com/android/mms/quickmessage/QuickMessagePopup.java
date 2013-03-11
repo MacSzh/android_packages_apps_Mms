@@ -1275,11 +1275,12 @@ public class QuickMessagePopup extends Activity implements
 				protected void onPostExecute(Void result) {
 					// TODO Auto-generated method stub
 					super.onPostExecute(result);
-				    mMessageList.remove(position);
+				  
 				      
                     mPagerAdapter.notifyDataSetChanged();
                     mMessagePager.setCurrentItem(position);
                     updateMessageCounter();
+                    mMessageList.remove(position);
                     if(mMessageList.size() == 0){
                     	  clearNotification(true);
                     	  finish();
@@ -1321,17 +1322,23 @@ public class QuickMessagePopup extends Activity implements
         @Override
         public void setPrimaryItem(ViewGroup container, int position, Object object) {
         	LinearLayout view = ((LinearLayout)object);
-            if (view != mCurrentPrimaryLayout) {
-                mCurrentPrimaryLayout = view;
-                final QuickMessage qm = mMessageList.get(position);
-                mFromTextView.setText(qm.getFromName());
-                if(!isNumeric(qm.getFromName())){
-                	 mFromPhoneTextView.setText(qm.getFromNumberm());
-                }else{
-                	mFromPhoneTextView.setText("");
-                }
-               
-            }
+        	try{
+        	     if (view != mCurrentPrimaryLayout) {
+                     mCurrentPrimaryLayout = view;
+                     System.out.println("position = "+position);
+                     final QuickMessage qm = mMessageList.get(position);
+                     mFromTextView.setText(qm.getFromName());
+                     if(!isNumeric(qm.getFromName())){
+                     	 mFromPhoneTextView.setText(qm.getFromNumberm());
+                     }else{
+                     	mFromPhoneTextView.setText("");
+                     }
+                    
+                 }
+        	}catch(Exception e){
+        		e.printStackTrace();
+        	}
+       
         }
         
         public boolean isNumeric(String str){
