@@ -178,6 +178,7 @@ import com.google.android.mms.pdu.PduPersister;
 import com.google.android.mms.pdu.SendReq;
 import com.android.mms.model.SlideModel;
 import com.android.mms.model.SlideshowModel;
+import com.android.mms.quickmessage.QuickMessagePopup;
 import com.android.mms.templates.TemplateGesturesLibrary;
 import com.android.mms.templates.TemplatesProvider.Template;
 import com.android.mms.transaction.MessagingNotification;
@@ -301,6 +302,7 @@ public class ComposeMessageActivity extends Activity
                                             // TODO: mExitOnSent is obsolete -- remove
 
     private View mTopPanel;                 // View containing the recipient and subject editors
+    private View mRecentContactsPanel;
     private View mBottomPanel;              // View containing the text editor, send button, ec.
     private EditText mTextEditor;           // Text editor to type your message into
     private TextView mTextCounter;          // Shows the number of characters used in text editor
@@ -917,6 +919,11 @@ public class ComposeMessageActivity extends Activity
                 break;
             }
 
+            ContactList contacts = mRecipientsEditor.constructContactsFromInput(false);
+            mClickHashMap= contacts.updateSelectRecipients(mClickHashMap);
+            if(mrecentAdpter!=null){
+            	mrecentAdpter.notifyDataSetChanged();
+            }
             // If we have gone to zero recipients, disable send button.
             updateSendButtonState();
         }
@@ -2006,6 +2013,8 @@ public class ComposeMessageActivity extends Activity
         PhoneNumberFormatter.setPhoneNumberFormattingTextWatcher(this, mRecipientsEditor);
 
         mTopPanel.setVisibility(View.VISIBLE);
+        
+        mRecentContactsPanel.setVisibility(View.VISIBLE);
     }
 
     //==========================================================
@@ -2118,6 +2127,7 @@ public class ComposeMessageActivity extends Activity
     private void hideOrShowTopPanel() {
         boolean anySubViewsVisible = (isSubjectEditorVisible() || isRecipientsEditorVisible());
         mTopPanel.setVisibility(anySubViewsVisible ? View.VISIBLE : View.GONE);
+        mRecentContactsPanel.setVisibility(anySubViewsVisible ? View.VISIBLE : View.GONE);
     }
 
     public void initialize(Bundle savedInstanceState, long originalThreadId) {
@@ -2556,6 +2566,8 @@ public class ComposeMessageActivity extends Activity
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
+            case KeyEvent.KEYCODE_SEARCH :
+            	return true;
             case KeyEvent.KEYCODE_DEL:
                 if ((mMsgListAdapter != null) && mMsgListView.isFocused()) {
                     Cursor cursor;
@@ -2991,36 +3003,49 @@ public class ComposeMessageActivity extends Activity
 //            return value;       // just return the default value or now
 //        }
 //    }
-    
+    ArrayList<Contact> mRecipientsList;
+    RecentAdpter mrecentAdpter;
 	private void addRecentContacts() {
 		// add by shendu liuchuan 
 		
 				if (mMsgListAdapter.getCount()==0&&mGridView!=null) {
-					final ArrayList<Contact> arrayList=new ArrayList<Contact>();
+//					final ArrayList<Contact> arrayList=new ArrayList<Contact>();
+					if(mRecipientsList!=null){
+						mRecipientsList.clear();
+					}else{
+						mRecipientsList=new ArrayList<Contact>();
+					}
 					ArrayList<String> numArrayList=getRecentContacts();
 					for (int i = 0; i < numArrayList.size(); i++) {
 						Contact contact = Contact.get(
 								numArrayList.get(i),
 								false);
-						arrayList.add(contact);
+//						arrayList.add(contact);
+						mRecipientsList.add(contact);
 					}
 
-			mGridView.setAdapter(new RecentAdpter(arrayList));
+//			mGridView.setAdapter(new RecentAdpter(arrayList));
+			mrecentAdpter= new RecentAdpter(mRecipientsList);
+			mGridView.setAdapter(mrecentAdpter);
 			mGridView.setOnItemClickListener(new OnItemClickListener() {
 
 				@Override
 				public void onItemClick(AdapterView<?> arg0, View arg1,
 						int arg2, long arg3) {
 					// TODO 自动生成的方法存根
-					mRecipientsEditor.submitItemByNum(arrayList.get(arg2).getNumber());
-					mClickHashMap.put(arg2, arg2);
+//					mRecipientsEditor.submitItemByNum(arrayList.get(arg2).getNumber());
+//					mClickHashMap.put(arg2, arg2);
+					mRecipientsEditor.submitItemByNum(mRecipientsList.get(arg2).getNumber());
+					String nameString=mRecipientsList.get(arg2).getName();
+					mClickHashMap.put(nameString ,arg2);
 					TextView textView = (TextView) arg1.getTag();
 					int left = textView.getPaddingLeft();
 					int right = textView.getPaddingRight();
 					int top = textView.getPaddingTop();
 					textView.setBackgroundResource(R.drawable.person_tag_blue);
 					textView.setPadding(left, top, right, 0);
-					onUpdate(arrayList.get(arg2));
+//					onUpdate(arrayList.get(arg2));
+					onUpdate(mRecipientsList.get(arg2));
 				}
 			});
 				}
@@ -3079,12 +3104,13 @@ public class ComposeMessageActivity extends Activity
 //	  class Views{
 //		TextView nameTextView;
 //	}
-	 HashMap<Integer, Integer> mClickHashMap=new HashMap<Integer, Integer>();
+	HashMap<String, Integer> mClickHashMap=new HashMap<String, Integer>();
 	private class RecentAdpter extends BaseAdapter{
 		private ArrayList<Contact> mArrayList;
               public  RecentAdpter(ArrayList<Contact> arrayList) {
 	                      mArrayList=arrayList;
                 }
+              
 			@Override
 			public View getView(int arg0, View arg1, ViewGroup arg2) {
 				// TODO 自动生成的方法存根
@@ -3102,16 +3128,19 @@ public class ComposeMessageActivity extends Activity
 					nameString=nameString.substring(0, 3);
 				}
 				nameTextView.setText(nameString);
+				if(isEnabled(arg0)){
+					nameTextView.setBackgroundResource(R.drawable.person_tag_white);
+				}
 				return arg1;
 			}
 
 			@Override
 			public boolean isEnabled(int position) {
 				// TODO 自动生成的方法存根
-				if (mClickHashMap.containsKey(position)) {
+				if (mClickHashMap.containsValue(position)) {
 					return false;
 				}else {
-					return super.isEnabled(position);
+					return true;
 				}
 				
 			}

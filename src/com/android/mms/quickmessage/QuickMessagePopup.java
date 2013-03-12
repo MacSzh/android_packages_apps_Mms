@@ -402,8 +402,17 @@ public class QuickMessagePopup extends Activity implements
         // Unlock the screen if needed
         unlockScreen();
     }
-
+    
     @Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		// TODO Auto-generated method stub
+		super.onWindowFocusChanged(hasFocus);
+		if(!hasFocus){
+			finish();
+		}
+	}
+
+	@Override
     protected void onStop() {
         super.onStop();
 

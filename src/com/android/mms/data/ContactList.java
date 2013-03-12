@@ -1,6 +1,7 @@
 package com.android.mms.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.net.Uri;
@@ -97,6 +98,18 @@ public class ContactList extends ArrayList<Contact>  {
             names[i++] = c.getName();
         }
         return TextUtils.join(separator, names);
+    }
+    
+    public  HashMap<String, Integer> updateSelectRecipients
+    ( HashMap<String, Integer> recipients ){
+    	HashMap<String, Integer> newrecipients  = 
+    			new HashMap<String, Integer>();
+    	for (Contact c : this) {
+    		if(recipients.containsKey(c.getName())){ ;
+    		newrecipients.put(c.getName(),recipients.get(c.getName()));
+    		}
+    	}
+    	return newrecipients;
     }
     
     public String formatNumbers(String separator) {

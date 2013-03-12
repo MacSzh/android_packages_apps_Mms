@@ -65,7 +65,7 @@
                       android:key="pref_key_mms_read_reports"
                       android:summary="@string/pref_summary_mms_read_reports"
                       android:title="@string/pref_title_mms_read_reports" />
-    <CheckBoxPreference android:defaultValue="true"
+    <CheckBoxPreference android:defaultValue="false"
                       android:key="pref_key_mms_auto_retrieval"
                       android:title="@string/pref_title_mms_auto_retrieval"
                       android:summary="@string/pref_summary_mms_auto_retrieval" />
