@@ -2014,7 +2014,7 @@ public class ComposeMessageActivity extends Activity
 
         mTopPanel.setVisibility(View.VISIBLE);
         
-        mRecentContactsPanel.setVisibility(View.VISIBLE);
+//        mRecentContactsPanel.setVisibility(View.VISIBLE);
     }
 
     //==========================================================
@@ -2127,7 +2127,7 @@ public class ComposeMessageActivity extends Activity
     private void hideOrShowTopPanel() {
         boolean anySubViewsVisible = (isSubjectEditorVisible() || isRecipientsEditorVisible());
         mTopPanel.setVisibility(anySubViewsVisible ? View.VISIBLE : View.GONE);
-        mRecentContactsPanel.setVisibility(anySubViewsVisible ? View.VISIBLE : View.GONE);
+//        mRecentContactsPanel.setVisibility(anySubViewsVisible ? View.VISIBLE : View.GONE);
     }
 
     public void initialize(Bundle savedInstanceState, long originalThreadId) {
@@ -3960,6 +3960,8 @@ public class ComposeMessageActivity extends Activity
         mSendButtonMms.setOnClickListener(this);
         mSendButtonSms.setOnClickListener(this);
         mTopPanel = findViewById(R.id.recipients_subject_linear);
+        
+//        mRecentContactsPanel = findViewById(R.id.recent_contacts_panel);
         mTopPanel.setFocusable(false);
         mAttachmentEditor = (AttachmentEditor) findViewById(R.id.attachment_editor);
         mAttachmentEditor.setHandler(mAttachmentEditorHandler);
