@@ -176,6 +176,7 @@ public class QuickMessagePopup extends Activity implements
     // Smiley and Emoji support
     private AlertDialog mSmileyDialog;
     private AlertDialog mEmojiDialog;
+    private AlertDialog mDeleteDialog;
     private View mEmojiView;
     private ContentResolver mContentResolver;
     private BackgroundQueryHandler mBackgroundQueryHandler;
@@ -238,7 +239,15 @@ public class QuickMessagePopup extends Activity implements
         
     }
     
-    private void setupViews() {
+    
+    
+    @Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+	}
+
+	private void setupViews() {
 
         // Load the main views
 //        mQmPagerArrow = (ImageView) findViewById(R.id.pager_arrow);
@@ -296,20 +305,21 @@ public class QuickMessagePopup extends Activity implements
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				 
-				 AlertDialog.Builder builder = new AlertDialog.Builder(QuickMessagePopup.this);
-			     builder.setCancelable(true);
-			     builder.setMessage(R.string.confirm_delete_message);
-			     builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
-						
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-							// TODO Auto-generated method stub
-					QuickMessage qm = mMessageList.get(mCurrentPage);
-					mPagerAdapter.deleMsg(qm, mCurrentPage);
-				}
-			    });
-			    builder.setNegativeButton(R.string.no, null);
-			    builder.show();
+//				 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+//			     builder.setCancelable(true);
+//			     builder.setMessage(R.string.confirm_delete_message);
+//			     builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+//						
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//							// TODO Auto-generated method stub
+//					QuickMessage qm = mMessageList.get(mCurrentPage);
+//					mPagerAdapter.deleMsg(qm, mCurrentPage);
+//				}
+//			    });
+//			    builder.setNegativeButton(R.string.no, null);
+//			    builder.show();
+				showDeletePromptDialog();
 			}
 		} );
 
@@ -340,6 +350,7 @@ public class QuickMessagePopup extends Activity implements
 //            }
 //        });
     }
+	
 
     private void parseIntent(Bundle extras, boolean newMessage) {
         if (extras == null) {
@@ -408,7 +419,7 @@ public class QuickMessagePopup extends Activity implements
 		// TODO Auto-generated method stub
 		super.onWindowFocusChanged(hasFocus);
 		if(!hasFocus){
-			finish();
+//			finish();
 		}
 	}
 
@@ -477,6 +488,27 @@ public class QuickMessagePopup extends Activity implements
      */
     private void selectTemplate() {
         getLoaderManager().restartLoader(0, null, this);
+    }
+    
+    private void showDeletePromptDialog(){
+    	if(mDeleteDialog == null){
+    		
+    		 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+		     builder.setCancelable(true);
+		     builder.setMessage(R.string.confirm_delete_message);
+		     builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+					
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+				QuickMessage qm = mMessageList.get(mCurrentPage);
+				mPagerAdapter.deleMsg(qm, mCurrentPage);
+			}
+		    });
+		    builder.setNegativeButton(R.string.no, null);
+		    mDeleteDialog = builder.create();
+    	}
+    	mDeleteDialog.show();
     }
 
     /**
@@ -1334,7 +1366,6 @@ public class QuickMessagePopup extends Activity implements
         	try{
         	     if (view != mCurrentPrimaryLayout) {
                      mCurrentPrimaryLayout = view;
-                     System.out.println("position = "+position);
                      final QuickMessage qm = mMessageList.get(position);
                      mFromTextView.setText(qm.getFromName());
                      if(!isNumeric(qm.getFromName())){

@@ -465,7 +465,7 @@ public class MessageListItem extends LinearLayout implements
                 //inflate the mms view_stub
                 View mmsStub = findViewById(R.id.mms_layout_view_stub);
                 mmsStub.setVisibility(View.VISIBLE);
-                mMessageContext.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
+                mMessageContext.setLayoutParams(new LayoutParams(300,LayoutParams.WRAP_CONTENT));
                 mMmsView = findViewById(R.id.mms_view);
             }
         }
