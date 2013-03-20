@@ -147,6 +147,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.SimpleAdapter;
@@ -318,7 +319,7 @@ public class ComposeMessageActivity extends Activity
 
     private RecipientsEditor mRecipientsEditor;  // UI control for editing recipients
     private ImageButton mRecipientsPicker;       // UI control for recipients picker
-   private ChipsRecipientAdapter mChipsRecipientAdapter;
+    private ChipsRecipientAdapter mChipsRecipientAdapter;
     private boolean mIsKeyboardOpen;             // Whether any keyboard is open
     private boolean mIsHardKeyboardOpen;         // Whether the hard keyboard is open
     private boolean mIsLandscape;                // Whether we're in landscape mode
@@ -2013,8 +2014,7 @@ public class ComposeMessageActivity extends Activity
         PhoneNumberFormatter.setPhoneNumberFormattingTextWatcher(this, mRecipientsEditor);
 
         mTopPanel.setVisibility(View.VISIBLE);
-        
-//        mRecentContactsPanel.setVisibility(View.VISIBLE);
+        mRecentContactsPanel.setVisibility(View.VISIBLE);
     }
 
     //==========================================================
@@ -2065,7 +2065,6 @@ public class ComposeMessageActivity extends Activity
         gestureOverlayView.setEventsInterceptionEnabled(true);
         gestureOverlayView.setGestureVisible(showGesture);
         gestureOverlayView.addOnGesturePerformedListener(this);
- 
         setProgressBarVisibility(false);
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_UNSPECIFIED |
@@ -2127,7 +2126,7 @@ public class ComposeMessageActivity extends Activity
     private void hideOrShowTopPanel() {
         boolean anySubViewsVisible = (isSubjectEditorVisible() || isRecipientsEditorVisible());
         mTopPanel.setVisibility(anySubViewsVisible ? View.VISIBLE : View.GONE);
-//        mRecentContactsPanel.setVisibility(anySubViewsVisible ? View.VISIBLE : View.GONE);
+        mRecentContactsPanel.setVisibility(anySubViewsVisible ? View.VISIBLE : View.GONE);
     }
 
     public void initialize(Bundle savedInstanceState, long originalThreadId) {
@@ -3961,7 +3960,7 @@ public class ComposeMessageActivity extends Activity
         mSendButtonSms.setOnClickListener(this);
         mTopPanel = findViewById(R.id.recipients_subject_linear);
         
-//        mRecentContactsPanel = findViewById(R.id.recent_contacts_panel);
+        mRecentContactsPanel = findViewById(R.id.recent_contacts_panel);
         mTopPanel.setFocusable(false);
         mAttachmentEditor = (AttachmentEditor) findViewById(R.id.attachment_editor);
         mAttachmentEditor.setHandler(mAttachmentEditorHandler);
