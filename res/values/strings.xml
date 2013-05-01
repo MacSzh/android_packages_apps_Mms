@@ -863,8 +863,8 @@
 
     <!-- QUICKMESSAGE SUPPORT -->
     <!-- Preferences -->
-    <string name="pref_quickmessage">QuickMessage</string>
-    <string name="pref_quickmessage_title">Enable QuickMessage</string>
+    <string name="pref_quickmessage">Quick reply</string>
+    <string name="pref_quickmessage_title">Show pop-up</string>
     <string name="pref_quickmessage_summary">Display the QuickMessage pop-up dialog</string>
     <string name="pref_wake_unlock_title">Wake and unlock</string>
     <string name="pref_wake_unlock_summary">Wake and unlock device on incoming message (insecure lock screens only)</string>
@@ -886,7 +886,8 @@
     <string name="toast_sending_message">Sending message</string>
 
     <!-- QM - Quick reply -->
-    <string name="qm_quick_reply">Quick reply</string>
+    <string name="qm_quick_reply">Reply</string>
+    <string name="qm_mark_read">Read</string>
 
     <!-- Add menu for 'Add SMS to calendar remind' -->
     <string name="menu_add_to_calendar">Add to calendar</string>
